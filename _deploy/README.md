@@ -1,6 +1,6 @@
 # Worksyne Docker Setup
 
-This folder runs Traefik, the Vue client behind Nginx, the Laravel API behind Nginx/PHP-FPM, and MySQL together.
+This folder runs Traefik, the Vue client through Vite, the Laravel API behind Nginx/PHP-FPM, and MySQL together.
 
 ## Local Domains
 
@@ -25,6 +25,12 @@ docker compose up --build
 HTTP requests are redirected to HTTPS automatically.
 
 The local certificate is generated in `_deploy/traefik/certs`. Because it is self-signed, your browser will warn until you trust `_deploy/traefik/certs/worksyne.local.test.crt` in your OS/browser certificate store.
+
+## Hot Reload
+
+The client source is mounted into the `client` container and served by Vite. Changes under `client/src` should update the browser without rebuilding.
+
+The API source is mounted into the `api` container. PHP code changes under `api` are picked up without rebuilding. Rebuild only when changing Dockerfiles, PHP extensions, Composer dependencies, or npm dependencies.
 
 MySQL:
 
