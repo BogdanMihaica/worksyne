@@ -1,0 +1,13 @@
+.git
+.agents
+.codex
+
+client/node_modules
+client/dist
+
+api/vendor
+api/node_modules
+api/storage/logs
+api/database/*.sqlite
+
+_deploy/mysql_data

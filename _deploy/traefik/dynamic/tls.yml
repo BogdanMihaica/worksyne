@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: /etc/traefik/certs/worksyne.local.test.crt
+      keyFile: /etc/traefik/certs/worksyne.local.test.key
