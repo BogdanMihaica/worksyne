@@ -3,13 +3,17 @@ import { routes } from '../routes'
 
 const authTokenKey = 'worksyne_auth_token'
 
+function isSignedIn() {
+  return localStorage.getItem(authTokenKey) === 'true'
+}
+
 export const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
 router.beforeEach((to) => {
-  const isAuthenticated = Boolean(localStorage.getItem(authTokenKey))
+  const isAuthenticated = isSignedIn()
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return {
@@ -20,8 +24,8 @@ router.beforeEach((to) => {
     }
   }
 
-  if (to.meta.guestOnly && isAuthenticated && typeof to.query.redirect === 'string') {
-    return to.query.redirect
+  if (to.meta.guestOnly && isAuthenticated) {
+    return typeof to.query.redirect === 'string' ? to.query.redirect : { name: 'dashboard' }
   }
 
   return true

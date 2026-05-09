@@ -1,9 +1,29 @@
-import SignIn from './views/SignIn.vue'
+import SignIn from './views/SignIn/SignIn.vue'
+import SignedInLayout from './layouts/SignedInLayout.vue'
+import Dashboard from './views/Dashboard/Dashboard.vue'
 
 export const routes = [
   {
     path: '/',
-    redirect: { name: 'sign-in' },
+    name: 'signed-in',
+    component: SignedInLayout,
+    redirect: { name: 'dashboard' },
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: Dashboard,
+        meta: {
+          requiresAuth: true,
+          showInSidebar: true,
+          label: 'Dashboard',
+          icon: 'pi pi-home',
+        },
+      },
+    ],
   },
   {
     path: '/sign-in',
@@ -15,6 +35,6 @@ export const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: { name: 'sign-in' },
+    redirect: { name: 'dashboard' },
   },
 ]

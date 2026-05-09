@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
@@ -11,9 +12,19 @@ import Password from 'primevue/password'
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
+const route = useRoute()
+const router = useRouter()
 
 function onSignIn() {
-  alert('Test');
+  localStorage.setItem('worksyne_auth_token', 'true')
+  localStorage.setItem('worksyne_user_email', email.value || 'dummy@worksyne.local')
+
+  if (typeof route.query.redirect === 'string') {
+    router.push(route.query.redirect)
+    return
+  }
+
+  router.push({ name: 'dashboard' })
 }
 </script>
 
@@ -25,19 +36,19 @@ function onSignIn() {
             <template #title>
               <div class="flex items-start justify-between gap-6">
                 <div>
-                  <p class="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-teal-600">
+                  <p class="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-900">
                     Welcome back
                   </p>
                   <h2 class="text-3xl font-semibold text-slate-950">Sign in</h2>
                 </div>
-                <span class="grid h-12 w-12 place-items-center rounded-lg bg-teal-50 text-teal-700">
+                <span class="grid h-12 w-12 place-items-center rounded-lg bg-brand-50 text-brand-900">
                   <i class="pi pi-lock text-lg" />
                 </span>
               </div>
             </template>
 
             <template #content>
-              <form class="space-y-5 pt-2" @submit.prevent>
+              <form class="space-y-5 pt-2" @submit.prevent="onSignIn">
                 <div class="space-y-2">
                   <label for="email" class="text-sm font-medium text-slate-700">Email address</label>
                   <IconField>
@@ -72,17 +83,16 @@ function onSignIn() {
                     <Checkbox id="remember" v-model="remember" binary />
                     <span>Remember me</span>
                   </label>
-                  <Button label="Forgot password?" link type="button" class="px-0 text-sm" />
+                  <Button label="Forgot password?" link type="button" class="px-0 text-sm text-brand-700!" />
                 </div>
 
                 <Button
                   label="Sign in"
                   icon="pi pi-arrow-right"
                   icon-pos="right"
-                  type="button"
-                  class="w-full justify-center"
+                  type="submit"
+                  class="w-full justify-center border-brand-900! bg-brand-700! text-white! hover:bg-brand-950!"
                   size="large"
-                  @click="onSignIn"
                 />
               </form>
             </template>
