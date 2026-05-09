@@ -15,12 +15,15 @@ Add these entries to your hosts file if they do not already resolve locally:
 
 ```sh
 cd _deploy
+cp .env.example .env
 docker compose up --build
 ```
 
-- Client: https://worksyne.local.test
-- API: https://api.worksyne.local.test
-- Traefik dashboard: http://localhost:8080
+Edit `.env` if you need different local domains, ports, or database credentials.
+
+- Client: `${CLIENT_URL}`
+- API: `${API_URL}`
+- Traefik dashboard: `http://localhost:${TRAEFIK_DASHBOARD_PORT}`
 
 HTTP requests are redirected to HTTPS automatically.
 
@@ -36,11 +39,11 @@ MySQL:
 
 - Host from containers: `mysql`
 - Host from your machine: `127.0.0.1`
-- Port: `3306`
-- Database: `worksyne`
-- User: `worksyne`
-- Password: `worksyne`
-- Root password: `root`
+- Port: `${MYSQL_PORT}`
+- Database: `${DB_DATABASE}`
+- User: `${DB_USERNAME}`
+- Password: `${DB_PASSWORD}`
+- Root password: `${MYSQL_ROOT_PASSWORD}`
 
 ## Laravel Commands
 
