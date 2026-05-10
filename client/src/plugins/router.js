@@ -1,19 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { routes } from '../routes'
-
-const authTokenKey = 'worksyne_auth_token'
-
-function isSignedIn() {
-  return localStorage.getItem(authTokenKey) === 'true'
-}
+import { authStore } from '../stores/auth'
 
 export const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
-router.beforeEach((to) => {
-  const isAuthenticated = isSignedIn()
+router.beforeEach(async (to) => {
+  if (authStore.isAuthenticated.value && !authStore.state.user) {
+    try {
+      await authStore.fetchUser()
+    } catch {
+      if (to.meta.requiresAuth) {
+        return {
+          name: 'sign-in',
+          query: {
+            redirect: to.fullPath,
+          },
+        }
+      }
+    }
+  }
+
+  const isAuthenticated = authStore.isAuthenticated.value
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return {

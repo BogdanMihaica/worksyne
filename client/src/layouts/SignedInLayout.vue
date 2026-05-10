@@ -1,18 +1,21 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import { routes } from '../routes'
+import { authStore } from '../stores/auth'
 
 const route = useRoute()
 const router = useRouter()
 const userMenu = ref()
+const sidebarCollapsedKey = 'worksyne_sidebar_collapsed'
+const isSidebarCollapsed = ref(localStorage.getItem(sidebarCollapsedKey) === 'true')
 
-const userEmail = computed(() => {
-  return localStorage.getItem('worksyne_user_email') || 'dummy@worksyne.local'
-})
+const userEmail = computed(() => authStore.userEmail.value)
+const sidebarWidthClass = computed(() => (isSidebarCollapsed.value ? 'lg:w-20' : 'lg:w-68'))
+const contentOffsetClass = computed(() => (isSidebarCollapsed.value ? 'lg:pl-20' : 'lg:pl-68'))
 
 const sidebarRoutes = computed(() => {
   const signedInRoute = routes.find((item) => item.name === 'signed-in')
@@ -24,29 +27,62 @@ const menuItems = [
   {
     label: 'Sign out',
     icon: 'pi pi-sign-out',
-    command: () => {
-      localStorage.setItem('worksyne_auth_token', 'false')
-      localStorage.removeItem('worksyne_user_email')
+    command: async () => {
+      await authStore.signOut()
       router.push({ name: 'sign-in' })
     },
   },
 ]
 
+onMounted(() => {
+  if (!authStore.state.user) {
+    authStore.fetchUser().catch(() => {
+      router.push({ name: 'sign-in' })
+    })
+  }
+})
+
 function toggleUserMenu(event) {
   userMenu.value.toggle(event)
+}
+
+function toggleSidebar() {
+  isSidebarCollapsed.value = !isSidebarCollapsed.value
+  localStorage.setItem(sidebarCollapsedKey, String(isSidebarCollapsed.value))
 }
 </script>
 
 <template>
   <div class="min-h-screen bg-[#f5f7fb] text-slate-950">
     <aside
-      class="fixed inset-y-0 left-0 z-20 hidden w-68 border-r border-slate-200 bg-white px-5 py-6 lg:flex lg:flex-col"
+      class="fixed inset-y-0 left-0 z-20 hidden border-r border-slate-200 bg-white px-4 py-6 transition-[width] duration-200 lg:flex lg:flex-col"
+      :class="sidebarWidthClass"
     >
-      <div class="flex items-center gap-3 px-2">
-        <span class="grid h-10 w-10 place-items-center rounded-lg bg-brand-900 text-white">
-          <i class="pi pi-briefcase text-lg" />
-        </span>
-        <span class="text-lg font-semibold tracking-[0.08em] text-brand-900">WORKSYNE</span>
+      <div
+        class="flex items-center gap-3 px-1"
+        :class="isSidebarCollapsed ? 'justify-center' : 'justify-between'"
+      >
+        <div class="flex min-w-0 items-center gap-3">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-900 text-white">
+            <i class="pi pi-briefcase text-lg" />
+          </span>
+          <span
+            v-if="!isSidebarCollapsed"
+            class="truncate text-lg font-semibold tracking-[0.08em] text-brand-900"
+          >
+            WORKSYNE
+          </span>
+        </div>
+
+        <Button
+          type="button"
+          :icon="isSidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+          severity="secondary"
+          text
+          rounded
+          :aria-label="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+          @click="toggleSidebar"
+        />
       </div>
 
       <nav class="mt-8 space-y-1">
@@ -54,18 +90,21 @@ function toggleUserMenu(event) {
           v-for="item in sidebarRoutes"
           :key="item.name"
           :to="{ name: item.name }"
-          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-          :class="{
-            'bg-brand-50 text-brand-900 ring-1 ring-inset ring-brand-100': route.name === item.name,
-          }"
+          class="flex min-h-10 items-center rounded-lg text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+          :class="[
+            isSidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3 py-2.5',
+            route.name === item.name ? 'bg-brand-50 text-brand-900 ring-1 ring-inset ring-brand-100' : '',
+          ]"
+          :aria-label="item.meta.label"
+          :title="isSidebarCollapsed ? item.meta.label : undefined"
         >
           <i :class="[item.meta.icon, 'text-base']" />
-          <span>{{ item.meta.label }}</span>
+          <span v-if="!isSidebarCollapsed">{{ item.meta.label }}</span>
         </RouterLink>
       </nav>
     </aside>
 
-    <div class="lg:pl-68">
+    <div :class="contentOffsetClass" class="transition-[padding] duration-200">
       <header
         class="sticky top-0 z-10 flex h-18 items-center justify-between border-b border-slate-200 bg-white/90 px-5 backdrop-blur lg:px-8"
       >

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -7,17 +7,33 @@ import Checkbox from 'primevue/checkbox'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
 import Password from 'primevue/password'
+import { authStore } from '../../stores/auth'
 
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
 const route = useRoute()
 const router = useRouter()
+const errorMessage = ref('')
+const isLoading = computed(() => authStore.state.isLoading)
 
-function onSignIn() {
-  localStorage.setItem('worksyne_auth_token', 'true')
-  localStorage.setItem('worksyne_user_email', email.value || 'dummy@worksyne.local')
+async function onSignIn() {
+  errorMessage.value = ''
+
+  try {
+    await authStore.signIn({
+      email: email.value,
+      password: password.value,
+    })
+  } catch (error) {
+    errorMessage.value =
+      error.response?.data?.errors?.email?.[0] ||
+      error.response?.data?.message ||
+      'Unable to sign in.'
+    return
+  }
 
   if (typeof route.query.redirect === 'string') {
     router.push(route.query.redirect)
@@ -49,6 +65,10 @@ function onSignIn() {
 
             <template #content>
               <form class="space-y-5 pt-2" @submit.prevent="onSignIn">
+                <Message v-if="errorMessage" severity="error" size="small">
+                  {{ errorMessage }}
+                </Message>
+
                 <div class="space-y-2">
                   <label for="email" class="text-sm font-medium text-slate-700">Email address</label>
                   <IconField>
@@ -60,6 +80,7 @@ function onSignIn() {
                       autocomplete="email"
                       class="w-full"
                       placeholder="you@company.com"
+                      required
                     />
                   </IconField>
                 </div>
@@ -75,6 +96,7 @@ function onSignIn() {
                     placeholder="Enter your password"
                     toggle-mask
                     :feedback="false"
+                    required
                   />
                 </div>
 
@@ -93,6 +115,7 @@ function onSignIn() {
                   type="submit"
                   class="w-full justify-center border-brand-900! bg-brand-700! text-white! hover:bg-brand-950!"
                   size="large"
+                  :loading="isLoading"
                 />
               </form>
             </template>
