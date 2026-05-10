@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->hasMany(Company::class, 'owner_id');
     }
 
+    public function authTokens(): HasMany
+    {
+        return $this->hasMany(AuthToken::class);
+    }
+
     public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_user')
@@ -69,5 +74,16 @@ class User extends Authenticatable
     public function seniorities(): HasMany
     {
         return $this->hasMany(CompanyUserSeniority::class);
+    }
+
+    public function userWorkstreams(): HasMany
+    {
+        return $this->hasMany(UserWorkstream::class);
+    }
+
+    public function workstreams(): BelongsToMany
+    {
+        return $this->belongsToMany(Workstream::class, 'user_workstream')
+            ->withTimestamps();
     }
 }
