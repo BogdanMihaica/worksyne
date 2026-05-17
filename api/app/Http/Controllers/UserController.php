@@ -4,12 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends ApiResourceController
 {
     protected string $modelClass = User::class;
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            QueryBuilder::for(User::class)
+                ->allowedFilters(
+                    'name',
+                    'email',
+                    AllowedFilter::exact('admin', 'is_admin'),
+                )
+                ->allowedSorts('name', 'email', 'created_at')
+                ->paginate()
+                ->appends(request()->query())
+        );
+    }
 
     protected function storeRules(): array
     {

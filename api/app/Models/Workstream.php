@@ -31,6 +31,7 @@ class Workstream extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_workstream')
+            ->withPivot(['unique_code', 'units'])
             ->withTimestamps();
     }
 }

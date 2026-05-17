@@ -59,4 +59,5 @@ abstract class ApiResourceController extends Controller
     {
         return $this->modelClass::query()->findOrFail($id);
     }
+
 }

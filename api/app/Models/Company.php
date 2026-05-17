@@ -8,10 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['id', 'name', 'owner_id', 'created_at', 'updated_at'])]
+#[Fillable(['id', 'subscription_plan_id', 'name', 'owner_id', 'created_at', 'updated_at'])]
 class Company extends Model
 {
     protected $table = 'company';
+
+    public function subscriptionPlan(): BelongsTo
+    {
+        return $this->belongsTo(SubscriptionPlan::class);
+    }
 
     public function owner(): BelongsTo
     {
@@ -38,5 +43,15 @@ class Company extends Model
     public function seniorities(): HasMany
     {
         return $this->hasMany(CompanyUserSeniority::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

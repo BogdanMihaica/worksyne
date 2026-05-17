@@ -4,11 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Feature;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class FeatureController extends ApiResourceController
 {
     protected string $modelClass = Feature::class;
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            QueryBuilder::for(Feature::class)
+                ->allowedFilters('name', 'key', 'description')
+                ->allowedSorts('name', 'key', 'created_at')
+                ->paginate()
+                ->appends(request()->query())
+        );
+    }
 
     protected function storeRules(): array
     {

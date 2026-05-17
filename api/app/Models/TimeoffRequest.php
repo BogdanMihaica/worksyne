@@ -6,25 +6,21 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['id', 'user_id', 'workstream_id', 'unique_code', 'units', 'created_at', 'updated_at'])]
-class UserWorkstream extends Model
+#[Fillable(['id', 'user_id', 'start_date', 'end_date', 'status', 'created_at', 'updated_at'])]
+class TimeoffRequest extends Model
 {
-    protected $table = 'user_workstream';
+    protected $table = 'timeoff_request';
 
     protected function casts(): array
     {
         return [
-            'units' => 'integer',
+            'start_date' => 'date',
+            'end_date' => 'date',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function workstream(): BelongsTo
-    {
-        return $this->belongsTo(Workstream::class);
     }
 }

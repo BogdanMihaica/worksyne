@@ -41,9 +41,9 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('subscription_plan_id')->nullable();
+            $table->foreignId('owner_id');
 
             $table->string('name')->unique();
-            $table->foreignId('owner_id');
 
             $table->timestamps();
         });
@@ -93,6 +93,18 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Time off requests table
+        Schema::create('timeoff_request', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('user_id');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+
+            $table->timestamps();
+        });
+
         // Subscription plans table
         Schema::create('subscription_plan', function (Blueprint $table) {
             $table->id();
@@ -120,6 +132,35 @@ return new class extends Migration
 
             $table->foreignId('subscription_plan_id');
             $table->foreignId('feature_id');
+
+            $table->timestamps();
+        });
+
+        Schema::create('order', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('user_id');
+            $table->foreignId('company_id');
+            $table->foreignId('subscription_plan_id');
+            
+            $table->decimal('amount', 8, 2);
+            $table->string('currency', 3);
+            $table->string('external_id')->nullable();
+            
+            $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
+
+            $table->timestamps();
+        });
+
+        Schema::create('subscription', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('company_id');
+            $table->foreignId('subscription_plan_id');
+            
+            $table->date('starts_at');
+            $table->date('ends_at')->nullable();
+            $table->enum('status', ['active', 'canceled', 'expired'])->default('active');
 
             $table->timestamps();
         });

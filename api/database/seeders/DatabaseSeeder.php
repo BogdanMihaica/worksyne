@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\Company;
 use App\Models\CompanyUser;
 use App\Models\CompanyUserSeniority;
+use App\Models\Order;
+use App\Models\Subscription;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Models\UserWorkstream;
 use App\Models\Workstream;
@@ -79,10 +82,52 @@ class DatabaseSeeder extends Seeder
             ),
         ];
 
+        $fakerUsers = User::factory()
+            ->count(50)
+            ->create([
+                'is_admin' => false,
+                'is_email_verified' => true,
+                'is_blocked' => false,
+            ]);
+
+        $subscriptionPlans = [
+            'starter' => SubscriptionPlan::query()->updateOrCreate(
+                ['name' => 'Starter'],
+                ['price' => 29.00],
+            ),
+            'growth' => SubscriptionPlan::query()->updateOrCreate(
+                ['name' => 'Growth'],
+                ['price' => 79.00],
+            ),
+            'enterprise' => SubscriptionPlan::query()->updateOrCreate(
+                ['name' => 'Enterprise'],
+                ['price' => 199.00],
+            ),
+        ];
+
         $company = Company::query()->updateOrCreate(
             ['name' => 'Acme Operations'],
-            ['owner_id' => $users['admin@worksyne.local.test']->id],
+            [
+                'owner_id' => $users['admin@worksyne.local.test']->id,
+                'subscription_plan_id' => $subscriptionPlans['growth']->id,
+            ],
         );
+
+        $additionalCompanies = collect([
+            ['name' => 'Northstar Logistics', 'plan' => 'starter'],
+            ['name' => 'Blue Harbor Support', 'plan' => 'growth'],
+            ['name' => 'Summit Field Services', 'plan' => 'enterprise'],
+            ['name' => 'Cedarline Operations', 'plan' => 'starter'],
+            ['name' => 'Orbit Response Group', 'plan' => 'growth'],
+        ])->map(function (array $companyData, int $index) use ($fakerUsers, $subscriptionPlans) {
+            return Company::query()->updateOrCreate(
+                ['name' => $companyData['name']],
+                [
+                    'owner_id' => $fakerUsers[$index]->id,
+                    'subscription_plan_id' => $subscriptionPlans[$companyData['plan']]->id,
+                ],
+            );
+        });
 
         $workstreams = [
             'tasks' => Workstream::query()->updateOrCreate(
@@ -129,6 +174,32 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        foreach ($additionalCompanies as $index => $additionalCompany) {
+            CompanyUser::query()->updateOrCreate(
+                [
+                    'company_id' => $additionalCompany->id,
+                    'user_id' => $fakerUsers[$index]->id,
+                ],
+                [
+                    'role' => 'company_admin',
+                    'status' => 'approved',
+                ],
+            );
+
+            foreach ($fakerUsers->slice(($index + 1) * 5, 5) as $fakerUser) {
+                CompanyUser::query()->updateOrCreate(
+                    [
+                        'company_id' => $additionalCompany->id,
+                        'user_id' => $fakerUser->id,
+                    ],
+                    [
+                        'role' => 'worker',
+                        'status' => 'approved',
+                    ],
+                );
+            }
+        }
+
         $seniorities = [
             ['email' => 'maria.lead@worksyne.local.test', 'workstream' => 'tasks', 'seniority' => 'senior'],
             ['email' => 'maria.lead@worksyne.local.test', 'workstream' => 'calls', 'seniority' => 'mid'],
@@ -155,12 +226,49 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($userWorkstreams as $userWorkstream) {
-            UserWorkstream::query()->updateOrCreate([
-                'user_id' => $users[$userWorkstream['email']]->id,
-                'workstream_id' => $workstreams[$userWorkstream['workstream']]->id,
-                'units' => $userWorkstream['units'],
-                'unique_code' => $userWorkstream['unique_code'],
-            ]);
+            UserWorkstream::query()->updateOrCreate(
+                [
+                    'unique_code' => $userWorkstream['unique_code'],
+                ],
+                [
+                    'user_id' => $users[$userWorkstream['email']]->id,
+                    'workstream_id' => $workstreams[$userWorkstream['workstream']]->id,
+                    'units' => $userWorkstream['units'],
+                ],
+            );
+        }
+
+        $companies = collect([$company])->merge($additionalCompanies);
+
+        foreach ($companies as $index => $seededCompany) {
+            $plan = $seededCompany->subscriptionPlan;
+            $startsAt = now()->subMonths($index + 1)->toDateString();
+
+            Subscription::query()->updateOrCreate(
+                [
+                    'company_id' => $seededCompany->id,
+                    'subscription_plan_id' => $plan->id,
+                ],
+                [
+                    'starts_at' => $startsAt,
+                    'ends_at' => null,
+                    'status' => 'active',
+                ],
+            );
+
+            Order::query()->updateOrCreate(
+                [
+                    'external_id' => 'seed-order-'.$seededCompany->id,
+                ],
+                [
+                    'user_id' => $seededCompany->owner_id,
+                    'company_id' => $seededCompany->id,
+                    'subscription_plan_id' => $plan->id,
+                    'amount' => $plan->price,
+                    'currency' => 'USD',
+                    'status' => 'paid',
+                ],
+            );
         }
     }
 }

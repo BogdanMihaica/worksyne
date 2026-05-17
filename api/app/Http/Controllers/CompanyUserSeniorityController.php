@@ -4,11 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\CompanyUserSeniority;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CompanyUserSeniorityController extends ApiResourceController
 {
     protected string $modelClass = CompanyUserSeniority::class;
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            QueryBuilder::for(CompanyUserSeniority::class)
+                ->allowedFilters(
+                    AllowedFilter::exact('company_id'),
+                    AllowedFilter::exact('user_id'),
+                    AllowedFilter::exact('workstream_id'),
+                    AllowedFilter::exact('seniority'),
+                )
+                ->allowedSorts('seniority', 'created_at')
+                ->paginate()
+                ->appends(request()->query())
+        );
+    }
 
     protected function storeRules(): array
     {

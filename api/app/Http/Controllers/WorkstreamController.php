@@ -4,10 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Workstream;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class WorkstreamController extends ApiResourceController
 {
     protected string $modelClass = Workstream::class;
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            QueryBuilder::for(Workstream::class)
+                ->allowedFilters(
+                    AllowedFilter::exact('company_id'),
+                    'name',
+                )
+                ->allowedSorts('name', 'created_at')
+                ->paginate()
+                ->appends(request()->query())
+        );
+    }
 
     protected function storeRules(): array
     {

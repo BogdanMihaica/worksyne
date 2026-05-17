@@ -29,4 +29,19 @@ class SubscriptionPlan extends Model
     {
         return $this->hasMany(SubscriptionPlanFeature::class);
     }
+
+    public function companies(): HasMany
+    {
+        return $this->hasMany(Company::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }
