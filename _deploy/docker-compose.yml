@@ -31,6 +31,7 @@ services:
       dockerfile: _deploy/api.Dockerfile
     container_name: worksyne-api
     user: "1000:1000"
+    command: sh -c "composer install --no-interaction --prefer-dist --optimize-autoloader && php-fpm"
     depends_on:
       mysql:
         condition: service_healthy
@@ -49,7 +50,6 @@ services:
       SESSION_DRIVER: database
     volumes:
       - ../api:/var/www/html
-      - api_vendor:/var/www/html/vendor
     networks:
       - worksyne
 
@@ -81,7 +81,6 @@ services:
       CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ../client:/app
-      - client_node_modules:/app/node_modules
     labels:
       - traefik.enable=true
       - traefik.http.routers.worksyne-client.rule=Host(`${CLIENT_HOST}`) || Host(`${CLIENT_WWW_HOST}`)
@@ -113,8 +112,6 @@ services:
       - worksyne
 
 volumes:
-  api_vendor:
-  client_node_modules:
   mysql_data:
 
 networks:
