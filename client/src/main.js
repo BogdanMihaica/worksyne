@@ -4,6 +4,7 @@ import 'primeicons/primeicons.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { registerComponents } from './plugins/components'
+import { registerFontAwesome } from './plugins/fontawesome'
 import { registerHttp } from './plugins/http'
 import { registerPrimeVue } from './plugins/primevue'
 import { registerRouter } from './plugins/router'
@@ -11,6 +12,7 @@ import { registerRouter } from './plugins/router'
 const app = createApp(App)
 
 registerHttp(app)
+registerFontAwesome()
 registerPrimeVue(app)
 registerComponents(app)
 registerRouter(app)

@@ -1,10 +1,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
-import { routes } from '../routes'
 import { authStore } from '../stores/auth'
 
 const route = useRoute()
@@ -16,12 +15,6 @@ const isSidebarCollapsed = ref(localStorage.getItem(sidebarCollapsedKey) === 'tr
 const userEmail = computed(() => authStore.userEmail.value)
 const sidebarWidthClass = computed(() => (isSidebarCollapsed.value ? 'lg:w-20' : 'lg:w-68'))
 const contentOffsetClass = computed(() => (isSidebarCollapsed.value ? 'lg:pl-20' : 'lg:pl-68'))
-
-const sidebarRoutes = computed(() => {
-  const signedInRoute = routes.find((item) => item.name === 'signed-in')
-
-  return (signedInRoute?.children || []).filter((item) => item.meta?.showInSidebar)
-})
 
 const menuItems = [
   {
@@ -54,7 +47,7 @@ function toggleSidebar() {
 
 <template>
   <div class="min-h-screen bg-[#f5f7fb] text-slate-950">
-    <aside
+    <div
       class="fixed inset-y-0 left-0 z-20 hidden border-r border-slate-200 bg-white px-4 py-6 transition-[width] duration-200 lg:flex lg:flex-col"
       :class="sidebarWidthClass"
     >
@@ -85,38 +78,14 @@ function toggleSidebar() {
         />
       </div>
 
-      <nav class="mt-8 space-y-1">
-        <RouterLink
-          v-for="item in sidebarRoutes"
-          :key="item.name"
-          :to="{ name: item.name }"
-          class="flex min-h-10 items-center rounded-lg text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-          :class="[
-            isSidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3 py-2.5',
-            route.name === item.name ? 'bg-brand-50 text-brand-900 ring-1 ring-inset ring-brand-100' : '',
-          ]"
-          :aria-label="item.meta.label"
-          :title="isSidebarCollapsed ? item.meta.label : undefined"
-        >
-          <i :class="[item.meta.icon, 'text-base']" />
-          <span v-if="!isSidebarCollapsed">{{ item.meta.label }}</span>
-        </RouterLink>
-      </nav>
-    </aside>
+      <sidebar-routes :is-collapsed="isSidebarCollapsed" />
+    </div>
 
     <div :class="contentOffsetClass" class="transition-[padding] duration-200">
-      <header
+      <div
         class="sticky top-0 z-10 flex h-18 items-center justify-between border-b border-slate-200 bg-white/90 px-5 backdrop-blur lg:px-8"
       >
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-brand-900">
-            Workspace
-          </p>
-          <h1 class="mt-1 text-xl font-semibold text-slate-950">
-            {{ route.meta.label || 'Dashboard' }}
-          </h1>
-        </div>
-
+        <div></div>
         <div class="flex items-center gap-3">
           <Button
             type="button"
@@ -143,11 +112,11 @@ function toggleSidebar() {
           </Button>
           <Menu id="user-menu" ref="userMenu" :model="menuItems" popup />
         </div>
-      </header>
+      </div>
 
-      <main class="px-5 py-6 lg:px-8">
+      <div class="px-5 py-6 lg:px-8">
         <RouterView />
-      </main>
+      </div>
     </div>
   </div>
 </template>

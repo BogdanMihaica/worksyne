@@ -45,7 +45,7 @@ async function onSignIn() {
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#f4f7fb] text-slate-950">
+  <div class="min-h-screen bg-[#f4f7fb] text-slate-950">
       <div class="flex min-h-screen items-center justify-center px-5 py-10 sm:px-8">
         <div class="w-full max-w-117.5">
           <Card class="overflow-hidden border border-slate-200 shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
@@ -101,10 +101,11 @@ async function onSignIn() {
                 </div>
 
                 <div class="flex items-center justify-between gap-4">
-                  <label for="remember" class="flex items-center gap-3 text-sm text-slate-600">
-                    <Checkbox id="remember" v-model="remember" binary />
+                  <label for="remember" class="flex items-center gap-2 text-sm text-slate-600">
+                    <Checkbox inputId="remember" v-model="remember" binary />
                     <span>Remember me</span>
                   </label>
+
                   <Button label="Forgot password?" link type="button" class="px-0 text-sm text-brand-700!" />
                 </div>
 
@@ -122,5 +123,5 @@ async function onSignIn() {
           </Card>
         </div>
       </div>
-  </main>
+  </div>
 </template>

@@ -1,0 +1,162 @@
+:root {
+    --vt-c-white: #ffffff;
+    --vt-c-white-soft: #f8f8f8;
+    --vt-c-white-mute: #f2f2f2;
+
+    --vt-c-black: #181818;
+    --vt-c-black-soft: #222222;
+    --vt-c-black-mute: #282828;
+
+    --vt-c-indigo: #2c3e50;
+
+    --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
+    --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+    --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+    --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+
+    --vt-c-text-light-1: var(--vt-c-indigo);
+    --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+    --vt-c-text-dark-1: var(--vt-c-white);
+    --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+}
+
+/* semantic color variables for this project */
+:root {
+    --color-background: var(--vt-c-white);
+    --color-background-soft: var(--vt-c-white-soft);
+    --color-background-mute: var(--vt-c-white-mute);
+
+    --color-border: var(--vt-c-divider-light-2);
+    --color-border-hover: var(--vt-c-divider-light-1);
+
+    --color-heading: var(--vt-c-text-light-1);
+    --color-text: var(--vt-c-text-light-1);
+
+    --section-gap: 160px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: var(--vt-c-black);
+        --color-background-soft: var(--vt-c-black-soft);
+        --color-background-mute: var(--vt-c-black-mute);
+
+        --color-border: var(--vt-c-divider-dark-2);
+        --color-border-hover: var(--vt-c-divider-dark-1);
+
+        --color-heading: var(--vt-c-text-dark-1);
+        --color-text: var(--vt-c-text-dark-2);
+    }
+}
+
+body {
+    color: #2c384af2;
+    min-height: 100vh;
+    font-family:
+        'Segoe UI',
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Fira Sans',
+        'Droid Sans',
+        'Helvetica Neue',
+        sans-serif;
+}
+
+/* Remove border-radius on all PrimeVue Selects */
+.p-select,
+.p-select .p-select-label,
+.p-select .p-select-value,
+.p-select-panel {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.p-select {
+    border: 1px solid #E5E7EB !important;
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+    padding-inline: 7px !important;
+}
+
+.p-autocomplete-input-multiple {
+    border: 1px solid #E5E7EB !important;
+}
+
+.p-select *:not(i),
+.p-datepicker *,
+.p-autocomplete * {
+    font-size: 13px !important;
+}
+
+.p-autocomplete-input-multiple {
+    border-radius: 0px !important;
+}
+
+.p-placeholder {
+    color: #9BA1A9 !important;
+}
+
+.p-select i {
+    font-size: 11px;
+}
+
+.p-select-overlay {
+    font-size: 13px !important;
+}
+
+.p-datepicker-input::placeholder {
+    color: #9BA1A9 !important;
+}
+
+.p-editor * {
+    border-radius: 0px !important;
+}
+
+/* Datatable styling */
+
+.p-datatable * {
+    font-size: 13px !important;
+}
+
+.p-datatable-thead {
+    color: #334155 !important;
+}
+
+.p-datatable-sort-icon {
+    font-size: 11px !important;
+    width: 11px !important;
+    height: 11px !important;
+}
+
+.p-datatable-column-sorted * {
+    background-color: #EEF2FF !important;
+    color: #334155 !important;
+}
+
+.p-datatable-thead,
+.p-datatable-header-cell:not(.p-datatable-column-sorted) {
+    background-color: #F9FAFB !important;
+}
+
+.p-row-odd td,
+.p-row-even td {
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+    font-size: 12px !important;
+}
+
+.p-datatable .fit-column {
+    width: 1px !important;
+    white-space: nowrap !important;
+}
+
+.p-datatable td {
+    text-wrap: wrap !important;
+}

@@ -1,0 +1,3 @@
+<template>
+  <company-list />
+</template>

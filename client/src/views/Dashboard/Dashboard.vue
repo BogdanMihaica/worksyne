@@ -4,7 +4,7 @@ import Tag from 'primevue/tag'
 </script>
 
 <template>
-  <section class="grid gap-5 xl:grid-cols-[1fr_22rem]">
+  <div class="grid gap-5 xl:grid-cols-[1fr_22rem]">
     <Card class="border border-slate-200 shadow-sm">
       <template #title>
         <div class="flex items-center justify-between gap-4">
@@ -38,5 +38,5 @@ import Tag from 'primevue/tag'
         </div>
       </template>
     </Card>
-  </section>
+  </div>
 </template>
