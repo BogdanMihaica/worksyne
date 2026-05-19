@@ -7,6 +7,12 @@ import Companies from './views/Companies/Companies.vue'
 import CompanyAdmins from './views/CompanyAdmins/CompanyAdmins.vue'
 import SubscriptionPlans from './views/SubscriptionPlans/SubscriptionPlans.vue'
 import Orders from './views/Orders/Orders.vue'
+import Company from './views/Company/Company.vue'
+import Workstreams from './views/Workstreams/Workstreams.vue'
+import OrderHistory from './views/OrderHistory/OrderHistory.vue'
+import Planner from './views/Planner/Planner.vue'
+import Timesheet from './views/Timesheet/Timesheet.vue'
+import Analytics from './views/Analytics/Analytics.vue'
 
 export const routes = [
   {
@@ -32,9 +38,6 @@ export const routes = [
         component: Dashboard,
         meta: {
           requiresAuth: true,
-          showInSidebar: true,
-          label: 'Dashboard',
-          icon: 'pi pi-home',
         },
       },
       {
@@ -43,9 +46,7 @@ export const routes = [
         component: Users,
         meta: {
           requiresAuth: true,
-          showInSidebar: true,
-          label: 'Users',
-          icon: 'pi pi-users',
+          roles: ['admin'],
         },
       },
       {
@@ -54,9 +55,7 @@ export const routes = [
         component: Companies,
         meta: {
           requiresAuth: true,
-          showInSidebar: true,
-          label: 'Companies',
-          icon: 'pi pi-building',
+          roles: ['admin'],
         },
       },
       {
@@ -65,9 +64,7 @@ export const routes = [
         component: CompanyAdmins,
         meta: {
           requiresAuth: true,
-          showInSidebar: true,
-          label: 'Company Admins',
-          icon: 'pi pi-user-edit',
+          roles: ['admin'],
         },
       },
       {
@@ -76,9 +73,7 @@ export const routes = [
         component: SubscriptionPlans,
         meta: {
           requiresAuth: true,
-          showInSidebar: true,
-          label: 'Subscription Plans',
-          icon: 'pi pi-credit-card',
+          roles: ['admin'],
         },
       },
       {
@@ -87,9 +82,61 @@ export const routes = [
         component: Orders,
         meta: {
           requiresAuth: true,
-          showInSidebar: true,
-          label: 'Orders',
-          icon: 'pi pi-receipt',
+          roles: ['admin'],
+        },
+      },
+      {
+        path: 'company',
+        name: 'company',
+        component: Company,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin', 'worker'],
+        },
+      },
+      {
+        path: 'workstreams',
+        name: 'workstreams',
+        component: Workstreams,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'order-history',
+        name: 'order-history',
+        component: OrderHistory,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin', 'admin'],
+        },
+      },
+      {
+        path: 'planner',
+        name: 'planner',
+        component: Planner,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'timesheet',
+        name: 'timesheet',
+        component: Timesheet,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin', 'team_lead', 'worker'],
+        },
+      },
+      {
+        path: 'analytics',
+        name: 'analytics',
+        component: Analytics,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin', 'admin'],
         },
       },
     ],

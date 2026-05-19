@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { routes } from '../../routes'
+import { authStore } from '../../stores/auth'
 
 defineProps({
   isCollapsed: {
@@ -12,10 +12,52 @@ defineProps({
 
 const route = useRoute()
 
-const sidebarRoutes = computed(() => {
-  const signedInRoute = routes.find((item) => item.name === 'signed-in')
+const routes = [
+  {
+    name: 'dashboard',
+    label: 'Dashboard',
+    icon: 'pi pi-home',
+  },
+  {
+    name: 'company',
+    label: 'Company',
+    icon: 'pi pi-building',
+    roles: ['company_admin', 'worker'],
+  },
+  {
+    name: 'workstreams',
+    label: 'Workstreams',
+    icon: 'pi pi-sitemap',
+    roles: ['company_admin'],
+  },
+  {
+    name: 'order-history',
+    label: 'Order History',
+    icon: 'pi pi-history',
+    roles: ['company_admin', 'admin'],
+  },
+  {
+    name: 'planner',
+    label: 'Planner',
+    icon: 'pi pi-calendar',
+    roles: ['company_admin'],
+  },
+  {
+    name: 'timesheet',
+    label: 'Timesheet',
+    icon: 'pi pi-clock',
+    roles: ['company_admin', 'team_lead', 'worker'],
+  },
+  {
+    name: 'analytics',
+    label: 'Analytics',
+    icon: 'pi pi-chart-line',
+    roles: ['company_admin', 'admin'],
+  },
+]
 
-  return (signedInRoute?.children || []).filter((item) => item.meta?.showInSidebar)
+const sidebarRoutes = computed(() => {
+  return routes.filter((item) => !item.roles || item.roles.includes(authStore.userRole.value))
 })
 </script>
 
@@ -30,11 +72,11 @@ const sidebarRoutes = computed(() => {
         isCollapsed ? 'justify-center px-2' : 'gap-3 px-3 py-2.5',
         route.name === item.name ? 'bg-brand-50 text-brand-900 ring-1 ring-inset ring-brand-100' : '',
       ]"
-      :aria-label="item.meta.label"
-      :title="isCollapsed ? item.meta.label : undefined"
+      :aria-label="item.label"
+      :title="isCollapsed ? item.label : undefined"
     >
-      <i :class="[item.meta.icon, 'text-base']" />
-      <span v-if="!isCollapsed">{{ item.meta.label }}</span>
+      <i :class="[item.icon, 'text-base']" />
+      <span v-if="!isCollapsed">{{ item.label }}</span>
     </RouterLink>
   </div>
 </template>

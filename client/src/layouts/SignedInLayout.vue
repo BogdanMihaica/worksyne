@@ -1,12 +1,11 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import { authStore } from '../stores/auth'
 
-const route = useRoute()
 const router = useRouter()
 const userMenu = ref()
 const sidebarCollapsedKey = 'worksyne_sidebar_collapsed'

@@ -34,6 +34,10 @@ router.beforeEach(async (to) => {
     }
   }
 
+  if (to.meta.roles && !to.meta.roles.includes(authStore.userRole.value)) {
+    return { name: 'dashboard' }
+  }
+
   if (to.meta.guestOnly && isAuthenticated) {
     return typeof to.query.redirect === 'string' ? to.query.redirect : { name: 'dashboard' }
   }

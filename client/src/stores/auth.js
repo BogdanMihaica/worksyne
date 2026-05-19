@@ -29,6 +29,8 @@ export const authStore = {
   state,
   isAuthenticated: computed(() => Boolean(state.token)),
   userEmail: computed(() => state.user?.email || ''),
+  userRole: computed(() => state.user?.role || ''),
+  isAdmin: computed(() => state.user?.role === 'admin'),
 
   async signIn(credentials) {
     state.isLoading = true
@@ -38,9 +40,9 @@ export const authStore = {
       const { data } = await http.post('/api/auth/login', credentials)
 
       setToken(data.token)
-      state.user = data.user
+      state.user = await this.fetchUser()
 
-      return data.user
+      return state.user
     } catch (error) {
       setToken(null)
       state.user = null
