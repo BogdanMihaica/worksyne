@@ -161,42 +161,36 @@ class DatabaseSeeder extends Seeder
             ['email' => 'nina.worker@worksyne.local.test', 'role' => 'worker', 'status' => 'pending'],
         ];
 
+        $assignCompanyUser = function (User $user, Company $company, string $role, string $status): CompanyUser {
+            $attributes = [
+                'company_id' => $company->id,
+                'role' => $role,
+                'status' => $status,
+            ];
+
+            $companyUser = $user->company_user_id
+                ? tap(CompanyUser::query()->findOrFail($user->company_user_id))->update($attributes)
+                : CompanyUser::query()->create($attributes);
+
+            $user->forceFill(['company_user_id' => $companyUser->id])->save();
+
+            return $companyUser;
+        };
+
         foreach ($memberships as $membership) {
-            CompanyUser::query()->updateOrCreate(
-                [
-                    'company_id' => $company->id,
-                    'user_id' => $users[$membership['email']]->id,
-                ],
-                [
-                    'role' => $membership['role'],
-                    'status' => $membership['status'],
-                ],
+            $assignCompanyUser(
+                $users[$membership['email']],
+                $company,
+                $membership['role'],
+                $membership['status'],
             );
         }
 
         foreach ($additionalCompanies as $index => $additionalCompany) {
-            CompanyUser::query()->updateOrCreate(
-                [
-                    'company_id' => $additionalCompany->id,
-                    'user_id' => $fakerUsers[$index]->id,
-                ],
-                [
-                    'role' => 'company_admin',
-                    'status' => 'approved',
-                ],
-            );
+            $assignCompanyUser($fakerUsers[$index], $additionalCompany, 'company_admin', 'approved');
 
             foreach ($fakerUsers->slice(($index + 1) * 5, 5) as $fakerUser) {
-                CompanyUser::query()->updateOrCreate(
-                    [
-                        'company_id' => $additionalCompany->id,
-                        'user_id' => $fakerUser->id,
-                    ],
-                    [
-                        'role' => 'worker',
-                        'status' => 'approved',
-                    ],
-                );
+                $assignCompanyUser($fakerUser, $additionalCompany, 'worker', 'approved');
             }
         }
 

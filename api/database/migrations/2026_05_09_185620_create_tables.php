@@ -61,12 +61,15 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('company_id');
-            $table->foreignId('user_id');
 
             $table->enum('role', ['company_admin', 'team_lead', 'worker'])->default('worker');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->timestamps();
+        });
+
+        Schema::table('user', function (Blueprint $table) {
+            $table->foreignId('company_user_id')->nullable()->unique()->after('id');
         });
 
         Schema::create('company_user_seniority', function (Blueprint $table) {
@@ -142,11 +145,11 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('company_id');
             $table->foreignId('subscription_plan_id');
-            
+
             $table->decimal('amount', 8, 2);
             $table->string('currency', 3);
             $table->string('external_id')->nullable();
-            
+
             $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
 
             $table->timestamps();
@@ -157,7 +160,7 @@ return new class extends Migration
 
             $table->foreignId('company_id');
             $table->foreignId('subscription_plan_id');
-            
+
             $table->date('starts_at');
             $table->date('ends_at')->nullable();
             $table->enum('status', ['active', 'canceled', 'expired'])->default('active');

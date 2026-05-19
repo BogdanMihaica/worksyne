@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CompanyUser;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -34,7 +36,6 @@ class CompanyUserController extends ApiResourceController
                         });
                     }),
                     AllowedFilter::exact('company_id'),
-                    AllowedFilter::exact('user_id'),
                     AllowedFilter::exact('role'),
                     AllowedFilter::exact('status'),
                 )
@@ -48,7 +49,7 @@ class CompanyUserController extends ApiResourceController
     {
         return [
             'company_id' => ['required', 'integer', 'exists:company,id'],
-            'user_id' => ['required', 'integer', 'exists:user,id'],
+            'user_id' => ['sometimes', 'required', 'integer', 'exists:user,id'],
             'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
         ];
@@ -62,5 +63,37 @@ class CompanyUserController extends ApiResourceController
             'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
         ];
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $attributes = $this->validatedAttributes($request, $this->storeRules());
+        $userId = $attributes['user_id'] ?? null;
+        unset($attributes['user_id']);
+
+        $companyUser = CompanyUser::query()->create($attributes);
+
+        if ($userId !== null) {
+            User::query()->whereKey($userId)->update(['company_user_id' => $companyUser->id]);
+        }
+
+        return response()->json($companyUser->load(['company', 'user']), 201);
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $companyUser = $this->findModel($id);
+        $attributes = $this->validatedAttributes($request, $this->updateRules($companyUser));
+        $userId = $attributes['user_id'] ?? null;
+        unset($attributes['user_id']);
+
+        $companyUser->update($attributes);
+
+        if ($userId !== null) {
+            User::query()->where('company_user_id', $companyUser->id)->update(['company_user_id' => null]);
+            User::query()->whereKey($userId)->update(['company_user_id' => $companyUser->id]);
+        }
+
+        return response()->json($companyUser->load(['company', 'user']));
     }
 }

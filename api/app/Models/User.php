@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable([
     'id',
+    'company_user_id',
     'name',
     'email',
     'email_verified_at',
@@ -64,16 +66,9 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function companies(): BelongsToMany
+    public function companyUser(): BelongsTo
     {
-        return $this->belongsToMany(Company::class, 'company_user')
-            ->withPivot(['role', 'status'])
-            ->withTimestamps();
-    }
-
-    public function companyMemberships(): HasMany
-    {
-        return $this->hasMany(CompanyUser::class);
+        return $this->belongsTo(CompanyUser::class);
     }
 
     public function seniorities(): HasMany

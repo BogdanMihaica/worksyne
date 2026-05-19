@@ -17,13 +17,14 @@ class UserController extends ApiResourceController
     public function index(): JsonResponse
     {
         return response()->json(
-            QueryBuilder::for(User::class)
+            QueryBuilder::for(User::query()->with(['companyUser.company']))
                 ->allowedFilters(
                     'name',
                     'email',
                     AllowedFilter::exact('admin', 'is_admin'),
+                    AllowedFilter::exact('company_user_id'),
                 )
-                ->allowedSorts('name', 'email', 'created_at')
+                ->allowedSorts('name', 'email', 'company_user_id', 'created_at')
                 ->paginate()
                 ->appends(request()->query())
         );
@@ -36,6 +37,7 @@ class UserController extends ApiResourceController
             'email' => ['required', 'email', 'max:255', 'unique:user,email'],
             'email_verified_at' => ['nullable', 'date'],
             'password' => ['required', 'string', 'min:8'],
+            'company_user_id' => ['nullable', 'integer', 'exists:company_user,id'],
             'is_admin' => ['sometimes', 'boolean'],
             'is_email_verified' => ['sometimes', 'boolean'],
             'is_blocked' => ['sometimes', 'boolean'],
@@ -49,6 +51,7 @@ class UserController extends ApiResourceController
             'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('user', 'email')->ignore($model->getKey())],
             'email_verified_at' => ['sometimes', 'nullable', 'date'],
             'password' => ['sometimes', 'nullable', 'string', 'min:8'],
+            'company_user_id' => ['sometimes', 'nullable', 'integer', 'exists:company_user,id'],
             'is_admin' => ['sometimes', 'boolean'],
             'is_email_verified' => ['sometimes', 'boolean'],
             'is_blocked' => ['sometimes', 'boolean'],

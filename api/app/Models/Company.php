@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 #[Fillable(['id', 'subscription_plan_id', 'name', 'owner_id', 'created_at', 'updated_at'])]
 class Company extends Model
@@ -28,11 +28,16 @@ class Company extends Model
         return $this->hasMany(Workstream::class);
     }
 
-    public function users(): BelongsToMany
+    public function users(): HasManyThrough
     {
-        return $this->belongsToMany(User::class, 'company_user')
-            ->withPivot(['role', 'status'])
-            ->withTimestamps();
+        return $this->hasManyThrough(
+            User::class,
+            CompanyUser::class,
+            'company_id',
+            'company_user_id',
+            'id',
+            'id',
+        );
     }
 
     public function memberships(): HasMany

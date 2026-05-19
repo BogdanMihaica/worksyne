@@ -73,7 +73,17 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        return response()->json($request->user());
+        $response = $request->user()->toArray();
+
+        $role = $request->user()->is_admin ? 'admin' : 'user';
+
+        if ($request->user()->companyUser) {
+            $role = $request->user()->companyUser->role;
+        }
+
+        $response['role'] = $role;
+
+        return response()->json($response);
     }
 
     public function logout(Request $request): JsonResponse
