@@ -78,7 +78,7 @@ function reloadParams(event) {
  * @param path
  */
 function getNestedValue(obj, path) {
-  return path.split('.').reduce((acc, part) => acc[part], obj)
+  return path.split('.').reduce((acc, part) => acc?.[part], obj)
 }
 
 /**

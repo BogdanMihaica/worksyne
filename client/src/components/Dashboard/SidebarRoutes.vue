@@ -19,6 +19,36 @@ const routes = [
     icon: 'pi pi-home',
   },
   {
+    name: 'users',
+    label: 'Users',
+    icon: 'pi pi-users',
+    roles: ['admin'],
+  },
+  {
+    name: 'companies',
+    label: 'Companies',
+    icon: 'pi pi-building',
+    roles: ['admin'],
+  },
+  {
+    name: 'company-admins',
+    label: 'Company Admins',
+    icon: 'pi pi-user-plus',
+    roles: ['admin'],
+  },
+  {
+    name: 'subscription-plans',
+    label: 'Subscription Plans',
+    icon: 'pi pi-credit-card',
+    roles: ['admin'],
+  },
+  {
+    name: 'orders',
+    label: 'Orders',
+    icon: 'pi pi-shopping-cart',
+    roles: ['admin'],
+  },
+  {
     name: 'company',
     label: 'Company',
     icon: 'pi pi-building',
@@ -34,7 +64,7 @@ const routes = [
     name: 'order-history',
     label: 'Order History',
     icon: 'pi pi-history',
-    roles: ['company_admin', 'admin'],
+    roles: ['company_admin'],
   },
   {
     name: 'planner',
@@ -52,7 +82,7 @@ const routes = [
     name: 'analytics',
     label: 'Analytics',
     icon: 'pi pi-chart-line',
-    roles: ['company_admin', 'admin'],
+    roles: ['admin'],
   },
 ]
 

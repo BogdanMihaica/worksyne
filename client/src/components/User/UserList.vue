@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const name = ref('')
 const email = ref('')
 const filters = ref({})
@@ -40,6 +42,20 @@ const columns = [
     sortable: true,
     date: true,
   },
+  {
+    field: 'actions',
+    header: 'Actions',
+    type: 'actions',
+    widthFit: true,
+    items: ({ data }) => [
+      {
+        label: 'Edit',
+        icon: 'pen-to-square',
+        severity: 'secondary',
+        onClick: () => openEditUser(data.id),
+      },
+    ],
+  },
 ]
 
 function onSearch() {
@@ -55,6 +71,14 @@ function onCancel() {
   name.value = ''
   email.value = ''
   filters.value = {}
+}
+
+function openCreateUser() {
+  router.push({ name: 'user-create' })
+}
+
+function openEditUser(id) {
+  router.push({ name: 'user-edit', params: { id } })
 }
 </script>
 
@@ -78,6 +102,14 @@ function onCancel() {
         default-sort-field="created_at"
         default-sort-order="desc"
         :filters="filters"
+      />
+    </template>
+
+    <template #actions>
+      <form-button
+        label="New"
+        icon="plus"
+        @click="openCreateUser"
       />
     </template>
   </app-card>

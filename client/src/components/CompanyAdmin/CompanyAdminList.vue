@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const name = ref('')
 const email = ref('')
 const company = ref('')
@@ -33,6 +35,22 @@ const columns = [
     header: 'Created at',
     date: true,
   },
+  {
+    field: 'actions',
+    header: 'Actions',
+    type: 'actions',
+    widthFit: true,
+    items: ({ data }) => data.user
+      ? [
+          {
+            label: 'Edit',
+            icon: 'pen-to-square',
+            severity: 'secondary',
+            onClick: () => openEditUser(data.user.id),
+          },
+        ]
+      : [],
+  },
 ]
 
 function onSearch() {
@@ -57,6 +75,10 @@ function onCancel() {
       role: 'company_admin',
     },
   }
+}
+
+function openEditUser(id) {
+  router.push({ name: 'user-edit', params: { id } })
 }
 </script>
 

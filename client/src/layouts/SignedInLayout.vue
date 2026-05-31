@@ -84,7 +84,7 @@ function toggleSidebar() {
       <div
         class="sticky top-0 z-10 flex h-18 items-center justify-between border-b border-slate-200 bg-white/90 px-5 backdrop-blur lg:px-8"
       >
-        <div></div>
+        <div class="text-lg font-medium">Admin Portal</div>
         <div class="flex items-center gap-3">
           <Button
             type="button"

@@ -50,6 +50,7 @@ const rows = [
 
         <div class="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
           <a href="#platform" class="hover:text-slate-950">Platform</a>
+          <RouterLink :to="{ name: 'pricing' }" class="hover:text-slate-950">Pricing</RouterLink>
           <a href="#contact" class="hover:text-slate-950">Contact</a>
         </div>
 

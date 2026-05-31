@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const name = ref('')
 const ownerEmail = ref('')
 const filters = ref({})
@@ -25,6 +27,20 @@ const columns = [
     sortable: true,
     date: true,
   },
+  {
+    field: 'actions',
+    header: 'Actions',
+    type: 'actions',
+    widthFit: true,
+    items: ({ data }) => [
+      {
+        label: 'Edit',
+        icon: 'pen-to-square',
+        severity: 'secondary',
+        onClick: () => openEditCompany(data.id),
+      },
+    ],
+  },
 ]
 
 function onSearch() {
@@ -40,6 +56,14 @@ function onCancel() {
   name.value = ''
   ownerEmail.value = ''
   filters.value = {}
+}
+
+function openCreateCompany() {
+  router.push({ name: 'company-create' })
+}
+
+function openEditCompany(id) {
+  router.push({ name: 'company-edit', params: { id } })
 }
 </script>
 
@@ -63,6 +87,14 @@ function onCancel() {
         default-sort-field="created_at"
         default-sort-order="desc"
         :filters="filters"
+      />
+    </template>
+
+    <template #actions>
+      <form-button
+        label="New"
+        icon="plus"
+        @click="openCreateCompany"
       />
     </template>
   </app-card>

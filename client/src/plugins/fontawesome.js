@@ -4,6 +4,9 @@ import {
   faEye,
   faEyeSlash,
   faMagnifyingGlass,
+  faPenToSquare,
+  faPlus,
+  faSave,
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -13,6 +16,9 @@ export function registerFontAwesome() {
     faEye,
     faEyeSlash,
     faMagnifyingGlass,
+    faPenToSquare,
+    faPlus,
     faSpinner,
+    faSave
   )
 }
