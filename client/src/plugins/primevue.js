@@ -1,6 +1,7 @@
 import { definePreset } from '@primeuix/themes'
 import Aura from '@primeuix/themes/aura'
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
 
 const WorksynePreset = definePreset(Aura, {
   semantic: {
@@ -29,4 +30,5 @@ export function registerPrimeVue(app) {
       },
     },
   })
+  app.use(ToastService)
 }

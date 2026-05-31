@@ -28,3 +28,7 @@ body {
 #app {
   min-height: 100vh;
 }
+
+.p-toast {
+  z-index: 9999;
+}

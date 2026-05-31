@@ -12,7 +12,10 @@ import SubscriptionPlans from './views/SubscriptionPlans/SubscriptionPlans.vue'
 import SubscriptionPlanForm from './views/SubscriptionPlans/SubscriptionPlanForm.vue'
 import Orders from './views/Orders/Orders.vue'
 import Company from './views/Company/Company.vue'
+import CompanyUsers from './views/CompanyUsers/CompanyUsers.vue'
+import CompanyUserForm from './views/CompanyUsers/CompanyUserForm.vue'
 import Workstreams from './views/Workstreams/Workstreams.vue'
+import WorkstreamForm from './views/Workstreams/WorkstreamForm.vue'
 import OrderHistory from './views/OrderHistory/OrderHistory.vue'
 import Planner from './views/Planner/Planner.vue'
 import Timesheet from './views/Timesheet/Timesheet.vue'
@@ -157,13 +160,58 @@ export const routes = [
         component: Company,
         meta: {
           requiresAuth: true,
-          roles: ['company_admin', 'worker'],
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'company-users',
+        name: 'company-users',
+        component: CompanyUsers,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'company-users/create',
+        name: 'company-user-create',
+        component: CompanyUserForm,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'company-users/:id',
+        name: 'company-user-edit',
+        component: CompanyUserForm,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
         },
       },
       {
         path: 'workstreams',
         name: 'workstreams',
         component: Workstreams,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'workstreams/create',
+        name: 'workstream-create',
+        component: WorkstreamForm,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'workstreams/:id',
+        name: 'workstream-edit',
+        component: WorkstreamForm,
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],

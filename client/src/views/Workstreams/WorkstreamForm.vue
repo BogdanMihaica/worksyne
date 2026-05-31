@@ -1,3 +1,3 @@
 <template>
-  <company-overview />
+  <workstream-form />
 </template>

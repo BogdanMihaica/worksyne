@@ -38,6 +38,6 @@ const localValue = computed({
       <div class="text-[13px] text-gray-800">{{ option.label || option }}</div>
     </label>
 
-    <app-form-error v-if="error" :error="error" />
+    <form-error v-if="error" :error="error" />
   </div>
 </template>

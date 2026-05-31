@@ -2,10 +2,12 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useHttp } from '../../plugins/http'
+import { useAppToast } from '../../plugins/toast'
 
 const route = useRoute()
 const router = useRouter()
 const http = useHttp()
+const toast = useAppToast()
 
 const name = ref('')
 const email = ref('')
@@ -13,6 +15,7 @@ const password = ref('')
 const isAdmin = ref(false)
 const isBlocked = ref(false)
 const companyId = ref('')
+const companyUserExternalId = ref('')
 const companyUserRole = ref('')
 const companyUserStatus = ref('pending')
 const companyOptions = ref([])
@@ -59,6 +62,7 @@ async function loadUser() {
 
   if (data.company_user) {
     companyId.value = data.company_user.company_id || ''
+    companyUserExternalId.value = data.company_user.external_id || ''
     companyUserRole.value = data.company_user.role || ''
     companyUserStatus.value = data.company_user.status || 'pending'
   }
@@ -95,6 +99,7 @@ async function submit() {
   if (companyUserRole.value) {
     payload.company_user = {
       company_id: companyId.value || null,
+      external_id: companyUserExternalId.value || null,
       role: companyUserRole.value,
       status: companyUserStatus.value,
     }
@@ -107,8 +112,11 @@ async function submit() {
       await http.post('/api/users', payload)
     }
 
+    toast({ type: 'success', message: isEditMode.value ? 'User updated successfully.' : 'User created successfully.' })
     router.push({ name: 'users' })
   } catch (error) {
+    toast({ type: 'error', message: 'Some errors occured' })
+
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors || {}
     }
@@ -123,7 +131,7 @@ function cancel() {
 </script>
 
 <template>
-  <app-card>
+  <app-card size="medium">
     <template #title>
       {{ title }}
     </template>
@@ -187,6 +195,13 @@ function cancel() {
           :options="companyOptions"
           :default-option="false"
           :error="errors['company_user.company_id']"
+        />
+
+        <form-input
+          v-model="companyUserExternalId"
+          label="Company external ID"
+          size="lg"
+          :error="errors['company_user.external_id']"
         />
 
         <form-select

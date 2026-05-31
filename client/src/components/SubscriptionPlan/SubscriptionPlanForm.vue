@@ -2,10 +2,12 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useHttp } from '../../plugins/http'
+import { useAppToast } from '../../plugins/toast'
 
 const route = useRoute()
 const router = useRouter()
 const http = useHttp()
+const toast = useAppToast()
 
 const name = ref('')
 const price = ref('')
@@ -51,8 +53,11 @@ async function submit() {
       await http.post('/api/subscription-plans', payload)
     }
 
+    toast({ type: 'success', message: isEditMode.value ? 'Subscription plan updated successfully.' : 'Subscription plan created successfully.' })
     router.push({ name: 'subscription-plans' })
   } catch (error) {
+    toast({ type: 'error', message: 'Some errors occured' })
+
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors || {}
     }
@@ -67,7 +72,7 @@ function cancel() {
 </script>
 
 <template>
-  <app-card>
+  <app-card size="medium">
     <template #title>
       {{ title }}
     </template>

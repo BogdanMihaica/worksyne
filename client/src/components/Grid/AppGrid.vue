@@ -91,6 +91,12 @@ function getNestedValue(obj, path) {
 function formatTimestamp(timestamp) {
   return timestamp?.split('.')[0].replace('T', ' ')
 }
+
+function formatValue(column, data) {
+  const value = getNestedValue(data, column.field)
+
+  return column.format ? column.format(value, data) : value
+}
 </script>
 
 <template>
@@ -168,6 +174,10 @@ function formatTimestamp(timestamp) {
       <template v-if="col.suffix" #body="slotProps">
         <span>{{ getNestedValue(slotProps.data, col.field) }}</span>
         <span>{{ col.suffix }}</span>
+      </template>
+
+      <template v-if="col.format" #body="slotProps">
+        {{ formatValue(col, slotProps.data) }}
       </template>
     </Column>
   </DataTable>

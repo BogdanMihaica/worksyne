@@ -1,3 +1,3 @@
 <template>
-  <div />
+  <workstream-list />
 </template>

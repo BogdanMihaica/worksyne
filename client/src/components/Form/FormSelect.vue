@@ -94,7 +94,7 @@ const sizeClass = computed(() => {
         </template>
       </Select>
       <div v-if="description" class="text-xs italic text-neutral-400 mt-1">{{ description }}</div>
-      <app-form-error v-if="error" :error="error" />
+      <form-error v-if="error" :error="error" />
     </label>
   </div>
 </template>

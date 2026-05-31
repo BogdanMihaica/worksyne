@@ -52,7 +52,13 @@ const routes = [
     name: 'company',
     label: 'Company',
     icon: 'pi pi-building',
-    roles: ['company_admin', 'worker'],
+    roles: ['company_admin'],
+  },
+  {
+    name: 'company-users',
+    label: 'Company Users',
+    icon: 'pi pi-users',
+    roles: ['company_admin'],
   },
   {
     name: 'workstreams',
