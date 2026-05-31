@@ -5,7 +5,9 @@ namespace Database\Seeders;
 use App\Models\Company;
 use App\Models\CompanyUser;
 use App\Models\CompanyUserSeniority;
+use App\Models\Feature;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
@@ -105,10 +107,66 @@ class DatabaseSeeder extends Seeder
             ),
         ];
 
+        $features = [
+            'workstream-tracking' => Feature::query()->updateOrCreate(
+                ['key' => 'workstream-tracking'],
+                [
+                    'name' => 'Workstream tracking',
+                    'description' => 'Track workload by team and operating stream.',
+                ],
+            ),
+            'time-management' => Feature::query()->updateOrCreate(
+                ['key' => 'time-management'],
+                [
+                    'name' => 'Time management',
+                    'description' => 'Manage timesheets and worker availability.',
+                ],
+            ),
+            'planning' => Feature::query()->updateOrCreate(
+                ['key' => 'planning'],
+                [
+                    'name' => 'Planning',
+                    'description' => 'Plan upcoming workload and events.',
+                ],
+            ),
+            'analytics' => Feature::query()->updateOrCreate(
+                ['key' => 'analytics'],
+                [
+                    'name' => 'Analytics',
+                    'description' => 'Review operational and revenue metrics.',
+                ],
+            ),
+            'priority-support' => Feature::query()->updateOrCreate(
+                ['key' => 'priority-support'],
+                [
+                    'name' => 'Priority support',
+                    'description' => 'Get faster support for critical operating issues.',
+                ],
+            ),
+        ];
+
+        $subscriptionPlans['starter']->features()->sync([
+            $features['workstream-tracking']->id,
+            $features['time-management']->id,
+        ]);
+        $subscriptionPlans['growth']->features()->sync([
+            $features['workstream-tracking']->id,
+            $features['time-management']->id,
+            $features['planning']->id,
+            $features['analytics']->id,
+        ]);
+        $subscriptionPlans['enterprise']->features()->sync([
+            $features['workstream-tracking']->id,
+            $features['time-management']->id,
+            $features['planning']->id,
+            $features['analytics']->id,
+            $features['priority-support']->id,
+        ]);
+
         $company = Company::query()->updateOrCreate(
             ['name' => 'Acme Operations'],
             [
-                'owner_id' => $users['admin@worksyne.local.test']->id,
+                'owner_id' => $users['alex.manager@worksyne.local.test']->id,
                 'subscription_plan_id' => $subscriptionPlans['growth']->id,
             ],
         );
@@ -154,7 +212,6 @@ class DatabaseSeeder extends Seeder
         ];
 
         $memberships = [
-            ['email' => 'admin@worksyne.local.test', 'role' => 'company_admin', 'status' => 'approved'],
             ['email' => 'alex.manager@worksyne.local.test', 'role' => 'company_admin', 'status' => 'approved'],
             ['email' => 'maria.lead@worksyne.local.test', 'role' => 'team_lead', 'status' => 'approved'],
             ['email' => 'sam.worker@worksyne.local.test', 'role' => 'worker', 'status' => 'approved'],
@@ -238,7 +295,7 @@ class DatabaseSeeder extends Seeder
             $plan = $seededCompany->subscriptionPlan;
             $startsAt = now()->subMonths($index + 1)->toDateString();
 
-            Subscription::query()->updateOrCreate(
+            $subscription = Subscription::query()->updateOrCreate(
                 [
                     'company_id' => $seededCompany->id,
                     'subscription_plan_id' => $plan->id,
@@ -250,7 +307,7 @@ class DatabaseSeeder extends Seeder
                 ],
             );
 
-            Order::query()->updateOrCreate(
+            $order = Order::query()->updateOrCreate(
                 [
                     'external_id' => 'seed-order-'.$seededCompany->id,
                 ],
@@ -261,6 +318,20 @@ class DatabaseSeeder extends Seeder
                     'amount' => $plan->price,
                     'currency' => 'USD',
                     'status' => 'paid',
+                ],
+            );
+
+            Payment::query()->updateOrCreate(
+                [
+                    'external_id' => 'seed-payment-'.$seededCompany->id,
+                ],
+                [
+                    'order_id' => $order->id,
+                    'subscription_id' => $subscription->id,
+                    'amount' => $order->amount,
+                    'currency' => $order->currency,
+                    'status' => 'paid',
+                    'paid_at' => now()->subMonths($index + 1),
                 ],
             );
         }

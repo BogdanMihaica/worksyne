@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PricingController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionPlanFeatureController;
@@ -20,12 +22,14 @@ Route::get('/health', function () {
         'status' => 'ok',
     ]);
 });
+Route::get('pricing', [PricingController::class, 'index']);
 
 Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::middleware('auth.token')->group(function () {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
 
+    Route::get('analytics', [AnalyticsController::class, 'index']);
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('company-users', CompanyUserController::class);
     Route::apiResource('company-user-seniorities', CompanyUserSeniorityController::class);
@@ -35,6 +39,7 @@ Route::middleware('auth.token')->group(function () {
     Route::apiResource('subscription-plans', SubscriptionPlanController::class);
     Route::apiResource('subscription-plan-features', SubscriptionPlanFeatureController::class);
     Route::apiResource('timeoff-requests', TimeoffRequestController::class);
+    Route::get('users/without-company', [UserController::class, 'withoutCompany']);
     Route::apiResource('users', UserController::class);
     Route::apiResource('user-workstreams', UserWorkstreamController::class);
     Route::apiResource('workstreams', WorkstreamController::class);

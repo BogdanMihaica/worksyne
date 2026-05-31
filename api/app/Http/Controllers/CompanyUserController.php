@@ -45,11 +45,16 @@ class CompanyUserController extends ApiResourceController
         );
     }
 
+    public function show(int $id): JsonResponse
+    {
+        return response()->json($this->findModel($id)->load(['company', 'user']));
+    }
+
     protected function storeRules(): array
     {
         return [
-            'company_id' => ['required', 'integer', 'exists:company,id'],
-            'user_id' => ['sometimes', 'required', 'integer', 'exists:user,id'],
+            'company_id' => ['nullable', 'integer', 'exists:company,id'],
+            'user_id' => ['sometimes', 'nullable', 'integer', 'exists:user,id'],
             'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
         ];
@@ -58,8 +63,8 @@ class CompanyUserController extends ApiResourceController
     protected function updateRules(Model $model): array
     {
         return [
-            'company_id' => ['sometimes', 'required', 'integer', 'exists:company,id'],
-            'user_id' => ['sometimes', 'required', 'integer', 'exists:user,id'],
+            'company_id' => ['sometimes', 'nullable', 'integer', 'exists:company,id'],
+            'user_id' => ['sometimes', 'nullable', 'integer', 'exists:user,id'],
             'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
         ];
@@ -84,14 +89,18 @@ class CompanyUserController extends ApiResourceController
     {
         $companyUser = $this->findModel($id);
         $attributes = $this->validatedAttributes($request, $this->updateRules($companyUser));
+        $shouldUpdateUser = array_key_exists('user_id', $attributes);
         $userId = $attributes['user_id'] ?? null;
         unset($attributes['user_id']);
 
         $companyUser->update($attributes);
 
-        if ($userId !== null) {
+        if ($shouldUpdateUser) {
             User::query()->where('company_user_id', $companyUser->id)->update(['company_user_id' => null]);
-            User::query()->whereKey($userId)->update(['company_user_id' => $companyUser->id]);
+
+            if ($userId !== null) {
+                User::query()->whereKey($userId)->update(['company_user_id' => $companyUser->id]);
+            }
         }
 
         return response()->json($companyUser->load(['company', 'user']));
