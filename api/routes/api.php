@@ -40,7 +40,8 @@ Route::middleware('auth.token')->group(function () {
 
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('company-users', CompanyUserController::class);
-    Route::post('company-user-seniorities/sync', [CompanyUserSeniorityController::class, 'sync']);
+    Route::put('company-users/{user}/seniorities', [CompanyUserSeniorityController::class, 'updateForUser'])
+        ->middleware('role:company_admin');
     Route::apiResource('company-user-seniorities', CompanyUserSeniorityController::class);
     Route::apiResource('features', FeatureController::class);
     Route::apiResource('orders', OrderController::class);

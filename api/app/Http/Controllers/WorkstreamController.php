@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Workstream;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -30,15 +31,30 @@ class WorkstreamController extends ApiResourceController
     {
         return [
             'company_id' => ['required', 'integer', 'exists:company,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('workstream', 'name')->where('company_id', request('company_id')),
+            ],
         ];
     }
 
     protected function updateRules(Model $model): array
     {
+        $companyId = request('company_id', $model->company_id);
+
         return [
             'company_id' => ['sometimes', 'required', 'integer', 'exists:company,id'],
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('workstream', 'name')
+                    ->where('company_id', $companyId)
+                    ->ignore($model->getKey()),
+            ],
         ];
     }
 }

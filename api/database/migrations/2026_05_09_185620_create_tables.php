@@ -55,6 +55,8 @@ return new class extends Migration
             $table->string('name');
 
             $table->timestamps();
+
+            $table->unique(['company_id', 'name']);
         });
 
         Schema::create('company_user', function (Blueprint $table) {
@@ -104,6 +106,8 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('timezone')->nullable();
+            $table->text('reason')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->timestamps();
