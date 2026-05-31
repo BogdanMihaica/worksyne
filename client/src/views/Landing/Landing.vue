@@ -103,7 +103,7 @@ const rows = [
         </div>
 
         <div class="rounded-md border border-slate-200 bg-slate-950 p-3 shadow-[0_28px_80px_rgba(15,23,42,0.22)] sm:p-5">
-          <div class="rounded-md border border-white/10 bg-white/[0.04]">
+          <div class="rounded-md border border-white/10 bg-white/4">
             <div class="flex flex-col gap-4 border-b border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p class="text-sm text-white/50">Operations command</p>
@@ -116,15 +116,15 @@ const rows = [
             </div>
 
             <div class="grid gap-3 p-4 sm:grid-cols-3">
-              <div class="rounded-md border border-white/10 bg-white/[0.06] p-4">
+              <div class="rounded-md border border-white/10 bg-white/6] p-4">
                 <p class="text-sm text-white/45">Workers</p>
                 <p class="mt-3 text-3xl font-semibold text-white">23</p>
               </div>
-              <div class="rounded-md border border-white/10 bg-white/[0.06] p-4">
+              <div class="rounded-md border border-white/10 bg-white/6 p-4">
                 <p class="text-sm text-white/45">Workstreams</p>
                 <p class="mt-3 text-3xl font-semibold text-white">3</p>
               </div>
-              <div class="rounded-md border border-white/10 bg-white/[0.06] p-4">
+              <div class="rounded-md border border-white/10 bg-white/6 p-4">
                 <p class="text-sm text-white/45">New units</p>
                 <p class="mt-3 text-3xl font-semibold text-white">16</p>
               </div>
@@ -135,7 +135,7 @@ const rows = [
                 <div
                   v-for="row in rows"
                   :key="row.team"
-                  class="grid gap-3 rounded-md border border-white/10 bg-white/[0.045] p-4 sm:grid-cols-[1fr_auto_auto_auto] sm:items-center"
+                  class="grid gap-3 rounded-md border border-white/10 bg-white/4.5 p-4 sm:grid-cols-[1fr_auto_auto_auto] sm:items-center"
                 >
                   <div>
                     <p class="font-medium text-white">{{ row.team }}</p>

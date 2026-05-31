@@ -46,12 +46,15 @@ async function submit() {
   try {
     if (isEditMode.value) {
       await http.put(`/api/workstreams/${route.params.id}`, payload)
+      toast({ type: 'success', message: 'Workstream updated successfully.' })
+      router.push({ name: 'workstreams' })
     } else {
-      await http.post('/api/workstreams', payload)
-    }
+      const response = await http.post('/api/workstreams', payload)
+      const { data } = await http.get(`/api/workstreams/${response.data.id}`)
 
-    toast({ type: 'success', message: isEditMode.value ? 'Workstream updated successfully.' : 'Workstream created successfully.' })
-    router.push({ name: 'workstreams' })
+      toast({ type: 'success', message: 'Workstream created successfully.' })
+      router.push({ name: 'workstream-edit', params: { id: data.id } })
+    }
   } catch (error) {
     toast({ type: 'error', message: 'Some errors occured' })
 

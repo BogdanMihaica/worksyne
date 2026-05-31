@@ -108,12 +108,15 @@ async function submit() {
   try {
     if (isEditMode.value) {
       await http.put(`/api/users/${route.params.id}`, payload)
+      toast({ type: 'success', message: 'User updated successfully.' })
+      router.push({ name: 'users' })
     } else {
-      await http.post('/api/users', payload)
-    }
+      const response = await http.post('/api/users', payload)
+      const { data } = await http.get(`/api/users/${response.data.id}`)
 
-    toast({ type: 'success', message: isEditMode.value ? 'User updated successfully.' : 'User created successfully.' })
-    router.push({ name: 'users' })
+      toast({ type: 'success', message: 'User created successfully.' })
+      router.push({ name: 'user-edit', params: { id: data.id } })
+    }
   } catch (error) {
     toast({ type: 'error', message: 'Some errors occured' })
 

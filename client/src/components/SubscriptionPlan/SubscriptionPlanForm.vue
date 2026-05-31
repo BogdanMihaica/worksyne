@@ -49,12 +49,15 @@ async function submit() {
   try {
     if (isEditMode.value) {
       await http.put(`/api/subscription-plans/${route.params.id}`, payload)
+      toast({ type: 'success', message: 'Subscription plan updated successfully.' })
+      router.push({ name: 'subscription-plans' })
     } else {
-      await http.post('/api/subscription-plans', payload)
-    }
+      const response = await http.post('/api/subscription-plans', payload)
+      const { data } = await http.get(`/api/subscription-plans/${response.data.id}`)
 
-    toast({ type: 'success', message: isEditMode.value ? 'Subscription plan updated successfully.' : 'Subscription plan created successfully.' })
-    router.push({ name: 'subscription-plans' })
+      toast({ type: 'success', message: 'Subscription plan created successfully.' })
+      router.push({ name: 'subscription-plan-edit', params: { id: data.id } })
+    }
   } catch (error) {
     toast({ type: 'error', message: 'Some errors occured' })
 

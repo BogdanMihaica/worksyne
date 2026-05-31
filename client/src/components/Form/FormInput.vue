@@ -92,7 +92,7 @@ function togglePasswordVisibility() {
             ? type
             : (visiblePassword ? 'text' : 'password')"
           :value="modelValue"
-          class="p-[7px] border border-gray-200 focus:outline-none"
+          class="p-1.75 border border-gray-200 focus:outline-none"
           :class="sizeClass"
           :placeholder="placeholder || `Enter ${label.toLowerCase()}`"
           @input="updateValue($event)"

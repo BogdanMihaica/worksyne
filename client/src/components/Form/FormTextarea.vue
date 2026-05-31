@@ -58,7 +58,7 @@ const sizeClass = computed(() => {
     <div>
       <textarea
         :value="modelValue"
-        class="w-full p-[7px] border text-[13px] border-gray-200 focus:outline-none h-auto"
+        class="w-full p-1.75 border text-[13px] border-gray-200 focus:outline-none h-auto"
         :placeholder="placeholder || `Enter agent ${label.toLowerCase()}`"
         :rows="rows"
         @input="$emit('update:modelValue', $event.target.value)"

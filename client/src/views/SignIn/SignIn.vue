@@ -45,10 +45,12 @@ async function onSignIn() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f4f7fb] text-slate-950">
-      <div class="flex min-h-screen items-center justify-center px-5 py-10 sm:px-8">
+  <div class="signin-backdrop relative min-h-screen overflow-hidden text-slate-950">
+      <div class="signin-sheen absolute inset-0" />
+
+      <div class="relative z-1 flex min-h-screen items-center justify-center px-5 py-10 sm:px-8">
         <div class="w-full max-w-117.5">
-          <Card class="overflow-hidden border border-slate-200 shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
+          <Card class="overflow-hidden border border-white/70 bg-white/92 shadow-[0_24px_80px_rgba(15,23,42,0.18)] backdrop-blur">
             <template #title>
               <div class="flex items-start justify-between gap-6">
                 <div>
@@ -125,3 +127,47 @@ async function onSignIn() {
       </div>
   </div>
 </template>
+
+<style scoped>
+.signin-backdrop {
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.78), rgba(247, 248, 252, 0.52)),
+    linear-gradient(135deg, #edf7ff 0%, #f5f7fb 28%, #eef2ff 54%, #e9fbf4 78%, #f7f8fb 100%);
+}
+
+.signin-backdrop::before {
+  position: absolute;
+  inset: -35%;
+  content: '';
+  background:
+    linear-gradient(115deg, transparent 0 22%, rgba(15, 17, 69, 0.1) 30%, transparent 42%),
+    linear-gradient(70deg, transparent 0 35%, rgba(29, 4, 111, 0.2) 48%, transparent 60%),
+    linear-gradient(150deg, transparent 0 40%, rgba(99, 111, 131, 0.16) 52%, transparent 64%);
+  animation: gradient-drift 18s ease-in-out infinite alternate;
+}
+
+.signin-sheen {
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.38) 45%, transparent 70%);
+  animation: sheen-slide 9s linear infinite;
+}
+
+@keyframes gradient-drift {
+  from {
+    transform: translate3d(-4%, -2%, 0) rotate(0deg);
+  }
+
+  to {
+    transform: translate3d(4%, 3%, 0) rotate(8deg);
+  }
+}
+
+@keyframes sheen-slide {
+  from {
+    transform: translateX(-45%);
+  }
+
+  to {
+    transform: translateX(45%);
+  }
+}
+</style>

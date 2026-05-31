@@ -7,7 +7,7 @@ defineProps({
 
 <template>
   <div class="flex justify-between items-end max-sm:flex-col">
-    <div class="flex gap-y-2 gap-x-[23px] flex-wrap">
+    <div class="flex gap-y-2 gap-x-5.75 flex-wrap">
       <slot name="filters"></slot>
     </div>
     <div class="flex gap-1">
