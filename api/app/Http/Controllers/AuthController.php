@@ -73,12 +73,13 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        $response = $request->user()->toArray();
+        $user = $request->user()->load(['companyUser.company']);
+        $response = $user->toArray();
 
-        $role = $request->user()->is_admin ? 'admin' : 'user';
+        $role = $user->is_admin ? 'admin' : 'user';
 
-        if ($request->user()->companyUser) {
-            $role = $request->user()->companyUser->role;
+        if ($user->companyUser) {
+            $role = $user->companyUser->role;
         }
 
         $response['role'] = $role;

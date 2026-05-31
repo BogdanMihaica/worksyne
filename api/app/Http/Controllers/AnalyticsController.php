@@ -13,8 +13,6 @@ class AnalyticsController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        abort_unless($request->user()?->is_admin, 403);
-
         $period = $request->string('period', 'year')->toString();
         $year = (int) $request->integer('year', now()->year);
         $month = (int) $request->integer('month', now()->month);

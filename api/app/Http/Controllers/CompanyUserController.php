@@ -36,10 +36,11 @@ class CompanyUserController extends ApiResourceController
                         });
                     }),
                     AllowedFilter::exact('company_id'),
+                    AllowedFilter::exact('external_id'),
                     AllowedFilter::exact('role'),
                     AllowedFilter::exact('status'),
                 )
-                ->allowedSorts('role', 'status', 'created_at')
+                ->allowedSorts('external_id', 'role', 'status', 'created_at')
                 ->paginate()
                 ->appends(request()->query())
         );
@@ -54,6 +55,7 @@ class CompanyUserController extends ApiResourceController
     {
         return [
             'company_id' => ['nullable', 'integer', 'exists:company,id'],
+            'external_id' => ['nullable', 'string', 'max:255'],
             'user_id' => ['sometimes', 'nullable', 'integer', 'exists:user,id'],
             'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
@@ -64,6 +66,7 @@ class CompanyUserController extends ApiResourceController
     {
         return [
             'company_id' => ['sometimes', 'nullable', 'integer', 'exists:company,id'],
+            'external_id' => ['sometimes', 'nullable', 'string', 'max:255'],
             'user_id' => ['sometimes', 'nullable', 'integer', 'exists:user,id'],
             'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],

@@ -88,6 +88,7 @@ class UserController extends ApiResourceController
             'is_blocked' => ['sometimes', 'boolean'],
             'company_user' => ['sometimes', 'array'],
             'company_user.company_id' => ['nullable', 'integer', 'exists:company,id'],
+            'company_user.external_id' => ['nullable', 'string', 'max:255'],
             'company_user.role' => ['nullable', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'company_user.status' => ['nullable', Rule::in(['pending', 'approved', 'rejected'])],
         ];
@@ -106,6 +107,7 @@ class UserController extends ApiResourceController
             'is_blocked' => ['sometimes', 'boolean'],
             'company_user' => ['sometimes', 'array'],
             'company_user.company_id' => ['nullable', 'integer', 'exists:company,id'],
+            'company_user.external_id' => ['nullable', 'string', 'max:255'],
             'company_user.role' => ['nullable', Rule::in(['company_admin', 'team_lead', 'worker'])],
             'company_user.status' => ['nullable', Rule::in(['pending', 'approved', 'rejected'])],
         ];
@@ -130,6 +132,7 @@ class UserController extends ApiResourceController
 
         $companyUser = $user->companyUser ?: CompanyUser::query()->create([
             'company_id' => $attributes['company_id'] ?? null,
+            'external_id' => $attributes['external_id'] ?? null,
             'role' => $attributes['role'],
             'status' => $attributes['status'] ?? 'pending',
         ]);
@@ -140,6 +143,7 @@ class UserController extends ApiResourceController
 
         $companyUser->update([
             'company_id' => $attributes['company_id'] ?? null,
+            'external_id' => $attributes['external_id'] ?? null,
             'role' => $attributes['role'],
             'status' => $attributes['status'] ?? 'pending',
         ]);

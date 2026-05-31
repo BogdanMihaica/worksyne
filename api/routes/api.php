@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
 use App\Http\Controllers\FeatureController;
@@ -29,9 +30,17 @@ Route::middleware('auth.token')->group(function () {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
 
-    Route::get('analytics', [AnalyticsController::class, 'index']);
+    Route::middleware('role:admin')->group(function () {
+        Route::get('analytics', [AnalyticsController::class, 'index']);
+    });
+
+    Route::middleware('role:company_admin')->group(function () {
+        Route::get('company-overview', [CompanyOverviewController::class, 'show']);
+    });
+
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('company-users', CompanyUserController::class);
+    Route::post('company-user-seniorities/sync', [CompanyUserSeniorityController::class, 'sync']);
     Route::apiResource('company-user-seniorities', CompanyUserSeniorityController::class);
     Route::apiResource('features', FeatureController::class);
     Route::apiResource('orders', OrderController::class);

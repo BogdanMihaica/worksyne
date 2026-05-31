@@ -218,9 +218,10 @@ class DatabaseSeeder extends Seeder
             ['email' => 'nina.worker@worksyne.local.test', 'role' => 'worker', 'status' => 'pending'],
         ];
 
-        $assignCompanyUser = function (User $user, Company $company, string $role, string $status): CompanyUser {
+        $assignCompanyUser = function (User $user, Company $company, string $role, string $status, string $externalId): CompanyUser {
             $attributes = [
                 'company_id' => $company->id,
+                'external_id' => $externalId,
                 'role' => $role,
                 'status' => $status,
             ];
@@ -240,14 +241,15 @@ class DatabaseSeeder extends Seeder
                 $company,
                 $membership['role'],
                 $membership['status'],
+                'ACME-'.$users[$membership['email']]->id,
             );
         }
 
         foreach ($additionalCompanies as $index => $additionalCompany) {
-            $assignCompanyUser($fakerUsers[$index], $additionalCompany, 'company_admin', 'approved');
+            $assignCompanyUser($fakerUsers[$index], $additionalCompany, 'company_admin', 'approved', 'ADM-'.$fakerUsers[$index]->id);
 
             foreach ($fakerUsers->slice(($index + 1) * 5, 5) as $fakerUser) {
-                $assignCompanyUser($fakerUser, $additionalCompany, 'worker', 'approved');
+                $assignCompanyUser($fakerUser, $additionalCompany, 'worker', 'approved', 'WRK-'.$fakerUser->id);
             }
         }
 
