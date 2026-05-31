@@ -40,7 +40,7 @@ const schedulerConfig = computed(() => ({
   startDate: currentStart.value,
   days: props.days,
   scale: 'Day',
-  cellWidth: 150,
+  cellWidth: 220,
   cellGroupBy: 'Day',
   timeHeaders: [
     { groupBy: 'Month', format: 'MMMM yyyy' },
