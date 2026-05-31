@@ -133,12 +133,15 @@ async function submit() {
   try {
     if (isEditMode.value) {
       await http.put(`/api/users/${route.params.id}`, payload)
+      toast({ type: 'success', message: 'Company user updated successfully.' })
+      router.push({ name: 'company-users' })
     } else {
-      await http.post('/api/users', payload)
-    }
+      const response = await http.post('/api/users', payload)
+      const { data } = await http.get(`/api/users/${response.data.id}`)
 
-    toast({ type: 'success', message: isEditMode.value ? 'Company user updated successfully.' : 'Company user created successfully.' })
-    router.push({ name: 'company-users' })
+      toast({ type: 'success', message: 'Company user created successfully.' })
+      router.push({ name: 'company-user-edit', params: { id: data.id } })
+    }
   } catch (error) {
     toast({ type: 'error', message: 'Some errors occured' })
 
@@ -167,9 +170,7 @@ async function saveSeniorities() {
     }))
 
   try {
-    await http.post('/api/company-user-seniorities/sync', {
-      company_id: companyId.value,
-      user_id: route.params.id,
+    await http.put(`/api/company-users/${route.params.id}/seniorities`, {
       items,
     })
 
@@ -249,7 +250,7 @@ function cancelSeniorities() {
       </template>
     </app-card>
 
-    <app-card size="fit">
+    <app-card v-if="isEditMode" size="fit">
       <template #title>
         Workstream Seniorities
       </template>

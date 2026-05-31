@@ -19,6 +19,7 @@ import WorkstreamForm from './views/Workstreams/WorkstreamForm.vue'
 import OrderHistory from './views/OrderHistory/OrderHistory.vue'
 import Planner from './views/Planner/Planner.vue'
 import Timesheet from './views/Timesheet/Timesheet.vue'
+import Profile from './views/Profile/Profile.vue'
 import Analytics from './views/Analytics/Analytics.vue'
 
 export const routes = [
@@ -233,6 +234,15 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: Profile,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin', 'team_lead', 'worker'],
         },
       },
       {

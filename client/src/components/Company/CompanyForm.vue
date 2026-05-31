@@ -99,12 +99,15 @@ async function submit() {
   try {
     if (isEditMode.value) {
       await http.put(`/api/companies/${route.params.id}`, payload)
+      toast({ type: 'success', message: 'Company updated successfully.' })
+      router.push({ name: 'companies' })
     } else {
-      await http.post('/api/companies', payload)
-    }
+      const response = await http.post('/api/companies', payload)
+      const { data } = await http.get(`/api/companies/${response.data.id}`)
 
-    toast({ type: 'success', message: isEditMode.value ? 'Company updated successfully.' : 'Company created successfully.' })
-    router.push({ name: 'companies' })
+      toast({ type: 'success', message: 'Company created successfully.' })
+      router.push({ name: 'company-edit', params: { id: data.id } })
+    }
   } catch (error) {
     toast({ type: 'error', message: 'Some errors occured' })
 
