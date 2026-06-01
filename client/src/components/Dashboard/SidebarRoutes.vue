@@ -79,6 +79,12 @@ const routes = [
     roles: ['company_admin'],
   },
   {
+    name: 'timeoff-requests',
+    label: 'Timeoff Requests',
+    icon: 'pi pi-calendar-clock',
+    roles: ['company_admin'],
+  },
+  {
     name: 'profile',
     label: 'Profile',
     icon: 'pi pi-user',
@@ -88,6 +94,12 @@ const routes = [
     name: 'timesheet',
     label: 'Timesheet',
     icon: 'pi pi-clock',
+    roles: ['company_admin', 'team_lead', 'worker'],
+  },
+  {
+    name: 'work-log',
+    label: 'Work Log',
+    icon: 'pi pi-clipboard',
     roles: ['company_admin', 'team_lead', 'worker'],
   },
   {

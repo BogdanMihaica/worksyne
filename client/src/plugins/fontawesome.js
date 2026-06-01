@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faBan,
+  faCheck,
   faEye,
   faEyeSlash,
   faMagnifyingGlass,
@@ -8,6 +9,7 @@ import {
   faPlus,
   faSave,
   faSpinner,
+  faX,
 } from '@fortawesome/free-solid-svg-icons'
 
 export function registerFontAwesome() {
@@ -19,6 +21,8 @@ export function registerFontAwesome() {
     faPenToSquare,
     faPlus,
     faSpinner,
-    faSave
+    faSave,
+    faX,
+    faCheck
   )
 }

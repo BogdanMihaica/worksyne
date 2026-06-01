@@ -13,9 +13,29 @@ const props = defineProps({
     type: [Number, String],
     default: null,
   },
+  userOptions: {
+    type: Array,
+    default: () => [],
+  },
+  status: {
+    type: String,
+    default: 'pending',
+  },
+  title: {
+    type: String,
+    default: 'Request Timeoff',
+  },
+  submitLabel: {
+    type: String,
+    default: 'Request',
+  },
+  timeoffRequest: {
+    type: Object,
+    default: null,
+  },
 })
 
-const emit = defineEmits(['update:modelValue', 'created'])
+const emit = defineEmits(['update:modelValue', 'created', 'updated'])
 
 const http = useHttp()
 const toast = useAppToast()
@@ -23,6 +43,7 @@ const toast = useAppToast()
 const startDate = ref('')
 const endDate = ref('')
 const reason = ref('')
+const selectedUserId = ref('')
 const errors = ref({})
 const saving = ref(false)
 
@@ -31,6 +52,7 @@ watch(
   (isOpen) => {
     if (isOpen) {
       reset()
+      fillFromTimeoffRequest()
     }
   },
 )
@@ -40,14 +62,25 @@ async function submit() {
   errors.value = {}
 
   try {
-    const { data } = await http.post('/api/timeoff-requests', {
-      user_id: props.userId,
+    const payload = {
+      user_id: props.userId || selectedUserId.value,
       start_date: startDate.value,
       end_date: endDate.value,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       reason: reason.value,
-      status: 'pending',
-    })
+      status: props.status,
+    }
+
+    if (props.timeoffRequest?.id) {
+      const { data } = await http.put(`/api/timeoff-requests/${props.timeoffRequest.id}`, payload)
+
+      toast({ type: 'success', message: 'Timeoff request updated successfully.' })
+      emit('updated', data)
+      close()
+      return
+    }
+
+    const { data } = await http.post('/api/timeoff-requests', payload)
 
     toast({ type: 'success', message: 'Timeoff request created successfully.' })
     emit('created', data)
@@ -71,7 +104,23 @@ function reset() {
   startDate.value = ''
   endDate.value = ''
   reason.value = ''
+  selectedUserId.value = ''
   errors.value = {}
+}
+
+function fillFromTimeoffRequest() {
+  if (!props.timeoffRequest) {
+    return
+  }
+
+  startDate.value = toDateOnly(props.timeoffRequest.start_date)
+  endDate.value = toDateOnly(props.timeoffRequest.end_date)
+  reason.value = props.timeoffRequest.reason || ''
+  selectedUserId.value = props.timeoffRequest.user_id || ''
+}
+
+function toDateOnly(value) {
+  return String(value || '').split('T')[0]
 }
 </script>
 
@@ -79,11 +128,21 @@ function reset() {
   <Dialog
     :visible="modelValue"
     modal
-    header="Request Timeoff"
+    :header="title"
     :style="{ width: 'min(520px, calc(100vw - 32px))' }"
     @update:visible="$emit('update:modelValue', $event)"
   >
     <form class="flex flex-col gap-4" @submit.prevent="submit">
+      <form-select
+        v-if="!userId"
+        v-model="selectedUserId"
+        label="User"
+        required
+        size="lg"
+        :options="userOptions"
+        :default-option="false"
+        :error="errors.user_id"
+      />
       <form-date
         v-model="startDate"
         label="Start date"
@@ -117,7 +176,7 @@ function reset() {
         <form-button
           type="submit"
           icon="save"
-          label="Request"
+          :label="submitLabel"
           :loading="saving"
         />
       </div>

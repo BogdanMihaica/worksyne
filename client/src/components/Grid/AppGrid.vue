@@ -126,58 +126,62 @@ function formatValue(column, data) {
       :class="col.widthFit ? 'fit-column' : ''"
       :bodyStyle="col.numeric ? 'text-align: right;' : 'text-align: left;'"
     >
-      <template v-if="col.boolean" #body="slotProps">
-        {{ getNestedValue(slotProps.data, col.field) ? 'Yes' : 'No' }}
-      </template>
+      <template #body="slotProps">
+        <template v-if="col.boolean">
+          {{ getNestedValue(slotProps.data, col.field) ? 'Yes' : 'No' }}
+        </template>
 
-      <template v-if="col.type === 'actions'" #body="slotProps">
-        <div v-for="item in col.items(slotProps)" class="block">
-          <app-action-button v-bind="item" />
-        </div>
-      </template>
-
-      <template v-if="col.type === 'image'" #body="slotProps">
-        <div class="h-30">
-          <img 
-            class="h-30"
-            :src="col.path(slotProps)" 
-            :alt="col.alt" 
+        <div v-else-if="col.type === 'actions'" class="flex flex-wrap gap-2">
+          <app-action-button
+            v-for="item in col.items(slotProps)"
+            :key="item.label"
+            v-bind="item"
           />
         </div>
-      </template>
 
-      <template v-if="col.rows" #body="slotProps">
-        <div>
-          <div v-for="row in col.rows">
+        <div v-else-if="col.type === 'image'" class="h-30">
+          <img
+            class="h-30"
+            :src="col.path(slotProps)"
+            :alt="col.alt"
+          />
+        </div>
+
+        <div v-else-if="col.rows">
+          <div v-for="row in col.rows" :key="row.field">
             <span class="font-bold">{{ row.header }}: </span>
             <span v-if="col.field">{{ slotProps.data[col.field][row.field] }}</span>
             <span v-else>{{ slotProps.data[row.field] }}</span>
           </div>
         </div>
-      </template>
 
-      <template v-if="col.date" #body="slotProps">
-        <div>
-          {{ formatTimestamp(slotProps.data[col.field]) }}
+        <div v-else-if="col.date">
+          {{ formatTimestamp(getNestedValue(slotProps.data, col.field)) }}
         </div>
-      </template>
 
-      <template v-if="col.severity" #body="slotProps">
-        <Tag :severity="col.severity(slotProps)" :value="getNestedValue(slotProps.data, col.field)"></Tag>
-      </template>
+        <Tag
+          v-else-if="col.severity"
+          :severity="col.severity(slotProps)"
+          :value="getNestedValue(slotProps.data, col.field)"
+        />
 
-      <template v-if="col.percentage" #body="slotProps">
-        <span>{{ getNestedValue(slotProps.data, col.field) }}</span>
-        <span> ({{ getNestedValue(slotProps.data, col.percentage) }}%)</span>
-      </template>
+        <template v-else-if="col.percentage">
+          <span>{{ getNestedValue(slotProps.data, col.field) }}</span>
+          <span> ({{ getNestedValue(slotProps.data, col.percentage) }}%)</span>
+        </template>
 
-      <template v-if="col.suffix" #body="slotProps">
-        <span>{{ getNestedValue(slotProps.data, col.field) }}</span>
-        <span>{{ col.suffix }}</span>
-      </template>
+        <template v-else-if="col.suffix">
+          <span>{{ getNestedValue(slotProps.data, col.field) }}</span>
+          <span>{{ col.suffix }}</span>
+        </template>
 
-      <template v-if="col.format" #body="slotProps">
-        {{ formatValue(col, slotProps.data) }}
+        <template v-else-if="col.format">
+          {{ formatValue(col, slotProps.data) }}
+        </template>
+
+        <template v-else>
+          {{ getNestedValue(slotProps.data, col.field) }}
+        </template>
       </template>
     </Column>
   </DataTable>

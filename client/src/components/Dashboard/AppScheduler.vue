@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { DayPilotScheduler } from '@daypilot/daypilot-lite-vue'
 
 const props = defineProps({
@@ -25,6 +25,7 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['range-change', 'event-click'])
 const currentStart = ref(props.startDate || formatDate(startOfWeek(new Date())))
 
 const weekLabel = computed(() => {
@@ -32,6 +33,18 @@ const weekLabel = computed(() => {
   const end = addDays(start, props.days - 1)
 
   return `${formatDisplayDate(start)} - ${formatDisplayDate(end)}`
+})
+
+const schedulerRows = computed(() => {
+  return props.rows
+    .filter(Boolean)
+    .map((row) => ({ ...row }))
+})
+
+const schedulerEvents = computed(() => {
+  return props.events
+    .filter(Boolean)
+    .map((event) => ({ ...event }))
 })
 
 const schedulerConfig = computed(() => ({
@@ -46,8 +59,7 @@ const schedulerConfig = computed(() => ({
     { groupBy: 'Month', format: 'MMMM yyyy' },
     { groupBy: 'Day', format: 'ddd d' },
   ],
-  resources: props.rows,
-  events: props.events,
+  resources: schedulerRows.value,
   rowHeaderWidth: 220,
   rowMarginTop: 8,
   rowMarginBottom: 8,
@@ -63,9 +75,17 @@ const schedulerConfig = computed(() => ({
   cellsMarkBusiness: true,
   floatingEvents: false,
   floatingTimeHeaders: true,
+  eventClickHandling: 'Enabled',
   eventMoveHandling: 'Disabled',
   eventResizeHandling: 'Disabled',
   timeRangeSelectedHandling: 'Disabled',
+  onEventClick: (args) => {
+    emit('event-click', {
+      event: args.e.data,
+      x: args.originalEvent.clientX,
+      y: args.originalEvent.clientY,
+    })
+  },
   onBeforeRowHeaderRender: (args) => {
     args.row.html = rowHeaderHtml(args.row.data)
   },
@@ -76,16 +96,33 @@ const schedulerConfig = computed(() => ({
   },
 }))
 
+onMounted(() => {
+  emitRangeChange()
+})
+
 function previous() {
   currentStart.value = formatDate(addDays(new Date(`${currentStart.value}T00:00:00`), -props.days))
+  emitRangeChange()
 }
 
 function next() {
   currentStart.value = formatDate(addDays(new Date(`${currentStart.value}T00:00:00`), props.days))
+  emitRangeChange()
 }
 
 function today() {
   currentStart.value = formatDate(startOfWeek(new Date()))
+  emitRangeChange()
+}
+
+function emitRangeChange() {
+  const start = new Date(`${currentStart.value}T00:00:00`)
+  const end = addDays(start, props.days - 1)
+
+  emit('range-change', {
+    start: currentStart.value,
+    end: formatDate(end),
+  })
 }
 
 function startOfWeek(date) {
@@ -122,6 +159,10 @@ function formatDisplayDate(date) {
 }
 
 function rowHeaderHtml(row) {
+  if (!row) {
+    return ''
+  }
+
   const subtitle = row.subtitle ? `<div class="worksyne-scheduler-row-subtitle">${escapeHtml(row.subtitle)}</div>` : ''
 
   return `
@@ -195,7 +236,7 @@ function escapeHtml(value) {
     </div>
 
     <div class="min-h-105 w-full overflow-hidden bg-slate-50/70 p-3">
-      <DayPilotScheduler :config="schedulerConfig" :events="events" />
+      <DayPilotScheduler :config="schedulerConfig" :events="schedulerEvents" />
     </div>
   </div>
 </template>
@@ -251,6 +292,18 @@ function escapeHtml(value) {
   box-shadow: 0 8px 20px rgb(15 23 42 / 10%);
   font-size: 12px;
   font-weight: 700;
+}
+
+:deep(.worksyne_scheduler_event.worksyne-scheduler-event-approved) {
+  border-color: #22c55e !important;
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+:deep(.worksyne_scheduler_event.worksyne-scheduler-event-pending) {
+  border-color: #f59e0b !important;
+  background: #fef3c7 !important;
+  color: #92400e !important;
 }
 
 :deep(.worksyne-scheduler-row) {
