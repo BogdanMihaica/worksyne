@@ -6,15 +6,16 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['id', 'user_id', 'workstream_id', 'unique_code', 'units', 'reference_code', 'note', 'created_at', 'updated_at'])]
-class UserWorkstream extends Model
+#[Fillable(['id', 'user_id', 'start_time', 'end_time', 'created_at', 'updated_at'])]
+class Timelog extends Model
 {
-    protected $table = 'user_workstream';
+    protected $table = 'timelog';
 
     protected function casts(): array
     {
         return [
-            'units' => 'integer',
+            'start_time' => 'datetime',
+            'end_time' => 'datetime',
         ];
     }
 
@@ -23,8 +24,8 @@ class UserWorkstream extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function workstream(): BelongsTo
+    public function breaks()
     {
-        return $this->belongsTo(Workstream::class);
+        return $this->hasMany(TimelogBreak::class, 'timelog_id');
     }
 }

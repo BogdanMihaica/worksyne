@@ -13,6 +13,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionPlanFeatureController;
 use App\Http\Controllers\TimeoffRequestController;
+use App\Http\Controllers\WorkLogController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserWorkstreamController;
 use App\Http\Controllers\WorkstreamController;
@@ -36,6 +37,9 @@ Route::middleware('auth.token')->group(function () {
 
     Route::middleware('role:company_admin')->group(function () {
         Route::get('company-overview', [CompanyOverviewController::class, 'show']);
+        Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet']);
+        Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex']);
+        Route::patch('company-timeoff-requests/{timeoffRequest}/status', [TimeoffRequestController::class, 'companyUpdateStatus']);
     });
 
     Route::apiResource('companies', CompanyController::class);
@@ -49,6 +53,10 @@ Route::middleware('auth.token')->group(function () {
     Route::apiResource('subscription-plans', SubscriptionPlanController::class);
     Route::apiResource('subscription-plan-features', SubscriptionPlanFeatureController::class);
     Route::apiResource('timeoff-requests', TimeoffRequestController::class);
+    Route::get('work-log/workstreams', [WorkLogController::class, 'workstreams']);
+    Route::get('work-log', [WorkLogController::class, 'index']);
+    Route::post('work-log', [WorkLogController::class, 'store']);
+    Route::put('work-log/{id}', [WorkLogController::class, 'update']);
     Route::get('users/without-company', [UserController::class, 'withoutCompany']);
     Route::apiResource('users', UserController::class);
     Route::apiResource('user-workstreams', UserWorkstreamController::class);

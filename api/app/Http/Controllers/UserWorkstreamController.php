@@ -21,9 +21,10 @@ class UserWorkstreamController extends ApiResourceController
                     AllowedFilter::exact('user_id'),
                     AllowedFilter::exact('workstream_id'),
                     'unique_code',
+                    'reference_code',
                     AllowedFilter::exact('units'),
                 )
-                ->allowedSorts('unique_code', 'units', 'created_at')
+                ->allowedSorts('unique_code', 'reference_code', 'units', 'created_at')
                 ->paginate()
                 ->appends(request()->query())
         );
@@ -34,8 +35,10 @@ class UserWorkstreamController extends ApiResourceController
         return [
             'user_id' => ['required', 'integer', 'exists:user,id'],
             'workstream_id' => ['required', 'integer', 'exists:workstream,id'],
-            'unique_code' => ['required', 'string', 'max:255', 'unique:user_workstream,unique_code'],
+            'unique_code' => ['nullable', 'string', 'max:255', 'unique:user_workstream,unique_code'],
             'units' => ['sometimes', 'required', 'integer', 'min:1', 'max:65535'],
+            'reference_code' => ['nullable', 'string', 'max:255'],
+            'note' => ['nullable', 'string'],
         ];
     }
 
@@ -44,8 +47,10 @@ class UserWorkstreamController extends ApiResourceController
         return [
             'user_id' => ['sometimes', 'required', 'integer', 'exists:user,id'],
             'workstream_id' => ['sometimes', 'required', 'integer', 'exists:workstream,id'],
-            'unique_code' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('user_workstream', 'unique_code')->ignore($model->getKey())],
+            'unique_code' => ['sometimes', 'nullable', 'string', 'max:255', Rule::unique('user_workstream', 'unique_code')->ignore($model->getKey())],
             'units' => ['sometimes', 'required', 'integer', 'min:1', 'max:65535'],
+            'reference_code' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'note' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

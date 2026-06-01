@@ -93,8 +93,10 @@ return new class extends Migration
 
             $table->foreignId('user_id');
             $table->foreignId('workstream_id');
-            $table->string('unique_code')->unique();
+            $table->string('unique_code')->nullable()->unique();
             $table->unsignedSmallInteger('units')->default(1);
+            $table->string('reference_code')->nullable();
+            $table->text('note')->nullable();
 
             $table->timestamps();
         });
