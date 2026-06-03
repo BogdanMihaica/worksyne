@@ -40,6 +40,9 @@ Route::middleware('auth.token')->group(function () {
         Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet']);
         Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex']);
         Route::patch('company-timeoff-requests/{timeoffRequest}/status', [TimeoffRequestController::class, 'companyUpdateStatus']);
+        Route::get('company-work-logs', [WorkLogController::class, 'companyIndex']);
+        Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions']);
+        Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary']);
     });
 
     Route::apiResource('companies', CompanyController::class);
