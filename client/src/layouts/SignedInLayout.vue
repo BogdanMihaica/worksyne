@@ -95,8 +95,9 @@ function toggleSidebar() {
             text
             rounded
             aria-label="Notifications"
-          />
-
+          /> 
+          <!--TODO: Add notifications-->
+          
           <Button
             type="button"
             text
