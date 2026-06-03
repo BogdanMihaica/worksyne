@@ -12,6 +12,7 @@ use App\Http\Controllers\PricingController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionPlanFeatureController;
+use App\Http\Controllers\TimelogController;
 use App\Http\Controllers\TimeoffRequestController;
 use App\Http\Controllers\WorkLogController;
 use App\Http\Controllers\UserController;
@@ -43,6 +44,14 @@ Route::middleware('auth.token')->group(function () {
         Route::get('company-work-logs', [WorkLogController::class, 'companyIndex']);
         Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions']);
         Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary']);
+    });
+
+    Route::middleware('role:company_admin,team_lead,worker')->group(function () {
+        Route::get('timelog/status', [TimelogController::class, 'status']);
+        Route::post('timelog/start', [TimelogController::class, 'start']);
+        Route::patch('timelog/stop', [TimelogController::class, 'stop']);
+        Route::post('timelog/break', [TimelogController::class, 'startBreak']);
+        Route::patch('timelog/resume', [TimelogController::class, 'resume']);
     });
 
     Route::apiResource('companies', CompanyController::class);

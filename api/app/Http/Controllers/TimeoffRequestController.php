@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\TimeoffRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -103,7 +104,21 @@ class TimeoffRequestController extends ApiResourceController
             ], 422);
         }
 
+        $previousStatus = $timeoffRequest->status;
+
         $timeoffRequest->update($attributes);
+
+        if ($previousStatus !== $attributes['status']) {
+            Notification::notify(
+                $timeoffRequest->user_id,
+                sprintf(
+                    'Your timeoff request from %s to %s was %s.',
+                    $this->dateOnly($timeoffRequest->start_date),
+                    $this->dateOnly($timeoffRequest->end_date),
+                    $attributes['status'],
+                ),
+            );
+        }
 
         return response()->json($timeoffRequest->load('user'));
     }
@@ -190,6 +205,18 @@ class TimeoffRequestController extends ApiResourceController
 
         $timeoffRequest = TimeoffRequest::query()->create($attributes);
 
+        if (! $isCompanyAdmin && $companyId) {
+            $this->notifyCompanyAdmins(
+                $companyId,
+                sprintf(
+                    '%s requested timeoff from %s to %s.',
+                    $user->name,
+                    $this->dateOnly($timeoffRequest->start_date),
+                    $this->dateOnly($timeoffRequest->end_date),
+                ),
+            );
+        }
+
         return response()->json($timeoffRequest, 201);
     }
 
@@ -223,7 +250,21 @@ class TimeoffRequestController extends ApiResourceController
             ], 422);
         }
 
+        $wasApproved = $timeoffRequest->status === 'approved';
+
         $timeoffRequest->update($attributes);
+
+        if (! $isCompanyAdmin && $wasApproved && $hasChanges && $companyUser?->company_id) {
+            $this->notifyCompanyAdmins(
+                $companyUser->company_id,
+                sprintf(
+                    '%s updated approved timeoff from %s to %s.',
+                    $user->name,
+                    $this->dateOnly($timeoffRequest->start_date),
+                    $this->dateOnly($timeoffRequest->end_date),
+                ),
+            );
+        }
 
         return response()->json($timeoffRequest);
     }
@@ -293,5 +334,25 @@ class TimeoffRequestController extends ApiResourceController
         }
 
         return (string) ($value ?? '');
+    }
+
+    private function notifyCompanyAdmins($companyId, $message)
+    {
+        User::query()
+            ->whereHas('companyUser', function ($query) use ($companyId) {
+                $query
+                    ->where('company_id', $companyId)
+                    ->where('role', 'company_admin')
+                    ->where('status', 'approved');
+            })
+            ->pluck('id')
+            ->each(function ($userId) use ($message) {
+                Notification::notify($userId, $message);
+            });
+    }
+
+    private function dateOnly($value)
+    {
+        return $this->normalizedValue($value);
     }
 }

@@ -92,4 +92,14 @@ class User extends Authenticatable
             ->withPivot(['unique_code', 'units'])
             ->withTimestamps();
     }
+
+    public function timelogs()
+    {
+        return $this->hasMany(Timelog::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

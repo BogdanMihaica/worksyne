@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['id', 'user_id', 'start_time', 'end_time', 'created_at', 'updated_at'])]
+#[Fillable(['id', 'user_id', 'start_time', 'end_time', 'continuous_work_notified_at', 'created_at', 'updated_at'])]
 class Timelog extends Model
 {
     protected $table = 'timelog';
@@ -16,6 +16,7 @@ class Timelog extends Model
         return [
             'start_time' => 'datetime',
             'end_time' => 'datetime',
+            'continuous_work_notified_at' => 'datetime',
         ];
     }
 
