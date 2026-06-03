@@ -82,10 +82,12 @@ function toggleSidebar() {
 
     <div :class="contentOffsetClass" class="transition-[padding] duration-200">
       <div
-        class="sticky top-0 z-10 flex h-18 items-center justify-between border-b border-slate-200 bg-white/90 px-5 backdrop-blur lg:px-8"
+        class="sticky top-0 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-5 py-3 backdrop-blur lg:px-8"
       >
         <div class="text-lg font-medium">Admin Portal</div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <work-timer />
+
           <Button
             type="button"
             icon="pi pi-bell"
