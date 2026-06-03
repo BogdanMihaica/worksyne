@@ -20,6 +20,7 @@ import OrderHistory from './views/OrderHistory/OrderHistory.vue'
 import Planner from './views/Planner/Planner.vue'
 import Timesheet from './views/Timesheet/Timesheet.vue'
 import TimeoffRequests from './views/TimeoffRequests/TimeoffRequests.vue'
+import CompanyWorkLogs from './views/CompanyWorkLogs/CompanyWorkLogs.vue'
 import Profile from './views/Profile/Profile.vue'
 import Analytics from './views/Analytics/Analytics.vue'
 import WorkLog from './views/WorkLog/WorkLog.vue'
@@ -242,6 +243,15 @@ export const routes = [
         path: 'timeoff-requests',
         name: 'timeoff-requests',
         component: TimeoffRequests,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'company-work-logs',
+        name: 'company-work-logs',
+        component: CompanyWorkLogs,
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],

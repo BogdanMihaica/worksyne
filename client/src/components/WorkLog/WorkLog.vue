@@ -150,7 +150,7 @@ function cancelEdit() {
 
 <template>
   <div class="flex flex-col gap-6">
-    <app-card v-if="companyId">
+    <app-card v-if="companyId" size="medium">
       <template #title>
         {{ title }}
       </template>

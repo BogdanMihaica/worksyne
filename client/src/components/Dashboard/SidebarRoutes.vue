@@ -85,6 +85,12 @@ const routes = [
     roles: ['company_admin'],
   },
   {
+    name: 'company-work-logs',
+    label: 'Work Logs',
+    icon: 'pi pi-list-check',
+    roles: ['company_admin'],
+  },
+  {
     name: 'profile',
     label: 'Profile',
     icon: 'pi pi-user',
