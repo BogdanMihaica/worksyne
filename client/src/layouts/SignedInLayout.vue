@@ -1,12 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { RouterView, useRouter } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import { authStore } from '../stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 const userMenu = ref()
 const sidebarCollapsedKey = 'worksyne_sidebar_collapsed'
 const isSidebarCollapsed = ref(localStorage.getItem(sidebarCollapsedKey) === 'true')
@@ -14,6 +15,7 @@ const isSidebarCollapsed = ref(localStorage.getItem(sidebarCollapsedKey) === 'tr
 const userEmail = computed(() => authStore.userEmail.value)
 const sidebarWidthClass = computed(() => (isSidebarCollapsed.value ? 'lg:w-20' : 'lg:w-68'))
 const contentOffsetClass = computed(() => (isSidebarCollapsed.value ? 'lg:pl-20' : 'lg:pl-68'))
+const showBackButton = computed(() => route.name !== 'dashboard')
 
 const menuItems = [
   {
@@ -41,6 +43,15 @@ function toggleUserMenu(event) {
 function toggleSidebar() {
   isSidebarCollapsed.value = !isSidebarCollapsed.value
   localStorage.setItem(sidebarCollapsedKey, String(isSidebarCollapsed.value))
+}
+
+function goBack() {
+  if (window.history.state?.back) {
+    router.back()
+    return
+  }
+
+  router.push({ name: 'dashboard' })
 }
 </script>
 
@@ -117,6 +128,18 @@ function toggleSidebar() {
       </div>
 
       <div class="px-5 py-6 lg:px-8">
+        <Button
+          v-if="showBackButton"
+          type="button"
+          icon="pi pi-arrow-left"
+          label="Back"
+          severity="secondary"
+          size="small"
+          text
+          class="mb-5"
+          @click="goBack"
+        />
+
         <RouterView />
       </div>
     </div>
