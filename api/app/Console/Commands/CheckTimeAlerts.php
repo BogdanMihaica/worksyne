@@ -56,6 +56,7 @@ class CheckTimeAlerts extends Command
                     Notification::notify(
                         $timelog->user_id,
                         'You have been working for over 8 hours in one session.',
+                        null,
                     );
                     $this->notifyCompanyAdmins(
                         $timelog->user,
@@ -91,6 +92,7 @@ class CheckTimeAlerts extends Command
                     Notification::notify(
                         $break->timelog->user_id,
                         'Your break has been running for over 2 hours.',
+                        null,
                     );
                     $this->notifyCompanyAdmins(
                         $break->timelog->user,
@@ -126,7 +128,7 @@ class CheckTimeAlerts extends Command
             })
             ->pluck('id')
             ->each(function ($userId) use ($message) {
-                Notification::notify($userId, $message);
+                Notification::notify($userId, $message, null);
             });
     }
 }

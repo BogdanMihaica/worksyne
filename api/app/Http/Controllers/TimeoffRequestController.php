@@ -117,6 +117,7 @@ class TimeoffRequestController extends ApiResourceController
                     $this->dateOnly($timeoffRequest->end_date),
                     $attributes['status'],
                 ),
+                $request->user()->id,
             );
         }
 
@@ -214,6 +215,7 @@ class TimeoffRequestController extends ApiResourceController
                     $this->dateOnly($timeoffRequest->start_date),
                     $this->dateOnly($timeoffRequest->end_date),
                 ),
+                $user->id,
             );
         }
 
@@ -263,6 +265,7 @@ class TimeoffRequestController extends ApiResourceController
                     $this->dateOnly($timeoffRequest->start_date),
                     $this->dateOnly($timeoffRequest->end_date),
                 ),
+                $user->id,
             );
         }
 
@@ -336,7 +339,7 @@ class TimeoffRequestController extends ApiResourceController
         return (string) ($value ?? '');
     }
 
-    private function notifyCompanyAdmins($companyId, $message)
+    private function notifyCompanyAdmins($companyId, $message, ?int $fromId = null)
     {
         User::query()
             ->whereHas('companyUser', function ($query) use ($companyId) {
@@ -346,8 +349,8 @@ class TimeoffRequestController extends ApiResourceController
                     ->where('status', 'approved');
             })
             ->pluck('id')
-            ->each(function ($userId) use ($message) {
-                Notification::notify($userId, $message);
+            ->each(function ($userId) use ($message, $fromId) {
+                Notification::notify($userId, $message, $fromId);
             });
     }
 

@@ -49,7 +49,7 @@ class DashboardController extends Controller
     private function unreadNotificationsCount(int $userId): int
     {
         return Notification::query()
-            ->where('user_id', $userId)
+            ->where('to_id', $userId)
             ->where('is_read', false)
             ->count();
     }

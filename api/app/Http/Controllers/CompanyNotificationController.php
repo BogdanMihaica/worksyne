@@ -77,8 +77,8 @@ class CompanyNotificationController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($validUserIds, $attributes) {
-            $validUserIds->each(fn (int $userId) => Notification::notify($userId, $attributes['message']));
+        DB::transaction(function () use ($request, $validUserIds, $attributes) {
+            $validUserIds->each(fn (int $userId) => Notification::notify($userId, $attributes['message'], $request->user()->id));
         });
 
         return response()->json([
