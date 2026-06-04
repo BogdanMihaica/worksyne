@@ -1,0 +1,1 @@
+* * * * * app cd /var/www/html && /usr/local/bin/php artisan schedule:run >> storage/logs/scheduler.log 2>&1
