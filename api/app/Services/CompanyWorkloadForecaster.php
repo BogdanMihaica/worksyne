@@ -101,7 +101,7 @@ class CompanyWorkloadForecaster
                 $senioritiesByWorkstream,
                 $capacityModels,
             ) {
-                $predictedUnits = (float) ($demandByWorkstreamAndWeekday->get($workstream->id)?->get($weekday) ?? 0);
+                $predictedUnits = ($demandByWorkstreamAndWeekday->get($workstream->id)?->get($weekday) ?? 0);
                 $availableCapacity = $isWeekend ? 0 : $this->workstreamCapacity(
                     $workstream->id,
                     $dateKey,
@@ -110,8 +110,8 @@ class CompanyWorkloadForecaster
                     $senioritiesByWorkstream,
                     $capacityModels,
                 );
-                $predictedUnits = (int) floor($predictedUnits);
-                $availableCapacity = (int) floor($availableCapacity);
+                $predictedUnits = floor($predictedUnits);
+                $availableCapacity = floor($availableCapacity);
 
                 return [
                     'workstream_id' => $workstream->id,
@@ -128,9 +128,9 @@ class CompanyWorkloadForecaster
             'is_weekend' => $isWeekend,
             'workstreams' => $forecastWorkstreams->all(),
             'totals' => [
-                'predicted_units' => (int) $forecastWorkstreams->sum('predicted_units'),
-                'available_capacity_units' => (int) $forecastWorkstreams->sum('available_capacity_units'),
-                'gap_units' => (int) $forecastWorkstreams->sum('gap_units'),
+                'predicted_units' => $forecastWorkstreams->sum('predicted_units'),
+                'available_capacity_units' => $forecastWorkstreams->sum('available_capacity_units'),
+                'gap_units' => $forecastWorkstreams->sum('gap_units'),
             ],
         ];
     }
@@ -150,9 +150,9 @@ class CompanyWorkloadForecaster
                     return 0;
                 }
 
-                $unitsPerHour = (float) ($capacityModels->get($workstreamId)?->get($seniority->seniority) ?? 0);
+                $unitsPerHour = ($capacityModels->get($workstreamId)?->get($seniority->seniority) ?? 0);
 
-                return (float) ($userHours->get($seniority->user_id, 8) * $unitsPerHour);
+                return ($userHours->get($seniority->user_id, 8) * $unitsPerHour);
             });
     }
 
@@ -173,16 +173,14 @@ class CompanyWorkloadForecaster
             ->whereBetween('user_workstream.created_at', [$historyStart, $historyEnd])
             ->groupBy('user_workstream.workstream_id', DB::raw('DAYOFWEEK(DATE(user_workstream.created_at))'))
             ->get();
-
         return $totals
             ->groupBy('workstream_id')
             ->map(function (Collection $workstreamRows) use ($historyDaysByWeekday) {
                 return $workstreamRows
                     ->mapWithKeys(function ($row) use ($historyDaysByWeekday) {
-                        $isoWeekday = (int) $row->weekday === 1 ? 7 : (int) $row->weekday - 1;
-                        $historyDays = max((int) $historyDaysByWeekday->get($isoWeekday, 0), 1);
-
-                        return [$isoWeekday => (float) $row->units / $historyDays];
+                        $isoWeekday = $row->weekday === 1 ? 7 : $row->weekday - 1;
+                        $historyDays = max($historyDaysByWeekday->get($isoWeekday, 0), 1);
+                        return [$isoWeekday => $row->units / $historyDays];
                     });
             });
     }
@@ -217,7 +215,7 @@ class CompanyWorkloadForecaster
 
     private function approvedTimeOffByUserAndDate(int $companyId, CarbonInterface $forecastStart, CarbonInterface $forecastEnd): Collection
     {
-        return TimeoffRequest::query()
+        $query = TimeoffRequest::query()
             ->where('status', 'approved')
             ->whereDate('start_date', '<=', $forecastEnd)
             ->whereDate('end_date', '>=', $forecastStart)
@@ -234,11 +232,13 @@ class CompanyWorkloadForecaster
                         $end = $request->end_date->lessThan($forecastEnd) ? $request->end_date : $forecastEnd;
 
                         return collect(CarbonPeriod::create($start, $end))
-                            ->map(fn (CarbonInterface $date) => $date->toDateString());
+                            ->map(fn(CarbonInterface $date) => $date->toDateString());
                     })
                     ->unique()
                     ->values();
             });
+            
+        return $query;
     }
 
     private function senioritiesByWorkstream(int $companyId): Collection
