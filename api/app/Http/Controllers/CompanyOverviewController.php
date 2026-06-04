@@ -35,7 +35,7 @@ class CompanyOverviewController extends Controller
                 'user.id',
                 'user.name',
                 'user.email',
-                DB::raw('COUNT(user_workstream.id) as workstream_count'),
+                DB::raw('COUNT(DISTINCT user_workstream.workstream_id) as workstream_count'),
                 DB::raw('SUM(user_workstream.units) as units'),
             ])
             ->join('user', 'user.id', '=', 'user_workstream.user_id')

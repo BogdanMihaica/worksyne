@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CapacityModelController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyForecastController;
 use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
@@ -38,6 +39,7 @@ Route::middleware('auth.token')->group(function () {
     });
 
     Route::middleware('role:company_admin')->group(function () {
+        Route::get('company-forecast', [CompanyForecastController::class, 'show']);
         Route::get('company-overview', [CompanyOverviewController::class, 'show']);
         Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet']);
         Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex']);
