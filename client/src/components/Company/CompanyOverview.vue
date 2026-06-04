@@ -37,19 +37,19 @@ function formatDate(value) {
         <div class="grid gap-4 lg:grid-cols-4">
           <div class="rounded-md border border-slate-200 bg-white p-4">
             <div class="text-sm text-slate-500">Company</div>
-            <div class="mt-2 text-xl font-semibold text-slate-950">{{ overview.company.name }}</div>
+            <div class="mt-2 text-sm font-semibold text-slate-950">{{ overview.company.name }}</div>
           </div>
           <div class="rounded-md border border-slate-200 bg-white p-4">
             <div class="text-sm text-slate-500">Owner</div>
-            <div class="mt-2 text-xl font-semibold text-slate-950">{{ overview.company.owner.email }}</div>
+            <div class="mt-2 text-sm font-semibold text-slate-950">{{ overview.company.owner.email }}</div>
           </div>
           <div class="rounded-md border border-slate-200 bg-white p-4">
             <div class="text-sm text-slate-500">Users</div>
-            <div class="mt-2 text-xl font-semibold text-slate-950">{{ overview.company.users_count }}</div>
+            <div class="mt-2 text-sm font-semibold text-slate-950">{{ overview.company.users_count }}</div>
           </div>
           <div class="rounded-md border border-slate-200 bg-white p-4">
             <div class="text-sm text-slate-500">Workstreams</div>
-            <div class="mt-2 text-xl font-semibold text-slate-950">{{ overview.company.workstreams_count }}</div>
+            <div class="mt-2 text-sm font-semibold text-slate-950">{{ overview.company.workstreams_count }}</div>
           </div>
         </div>
 

@@ -25,6 +25,7 @@ import Profile from './views/Profile/Profile.vue'
 import Analytics from './views/Analytics/Analytics.vue'
 import WorkLog from './views/WorkLog/WorkLog.vue'
 import CapacityModels from './views/CapacityModels/CapacityModels.vue'
+import Forecast from './views/Forecast/Forecast.vue'
 
 export const routes = [
   {
@@ -226,6 +227,15 @@ export const routes = [
         path: 'capacity-models',
         name: 'capacity-models',
         component: CapacityModels,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
+        path: 'forecast',
+        name: 'forecast',
+        component: Forecast,
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],

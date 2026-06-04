@@ -73,6 +73,12 @@ const routes = [
     roles: ['company_admin'],
   },
   {
+    name: 'forecast',
+    label: 'Forecast',
+    icon: 'pi pi-chart-bar',
+    roles: ['company_admin'],
+  },
+  {
     name: 'order-history',
     label: 'Order History',
     icon: 'pi pi-history',
