@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyForecastController;
 use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PricingController;
@@ -33,6 +34,7 @@ Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttl
 Route::middleware('auth.token')->group(function () {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
+    Route::get('dashboard', [DashboardController::class, 'show']);
 
     Route::middleware('role:admin')->group(function () {
         Route::get('analytics', [AnalyticsController::class, 'index']);
