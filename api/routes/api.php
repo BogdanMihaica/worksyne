@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyForecastController;
 use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
+use App\Http\Controllers\CompanyNotificationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\OrderController;
@@ -42,6 +43,8 @@ Route::middleware('auth.token')->group(function () {
 
     Route::middleware('role:company_admin')->group(function () {
         Route::get('company-forecast', [CompanyForecastController::class, 'show']);
+        Route::get('company-notifications/recipients', [CompanyNotificationController::class, 'recipients']);
+        Route::post('company-notifications', [CompanyNotificationController::class, 'store']);
         Route::get('company-overview', [CompanyOverviewController::class, 'show']);
         Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet']);
         Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex']);
