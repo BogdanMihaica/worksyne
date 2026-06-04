@@ -46,6 +46,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  min: {
+    type: [String, Number],
+    default: null,
+  },
+  max: {
+    type: [String, Number],
+    default: null,
+  },
+  step: {
+    type: [String, Number],
+    default: null,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -95,6 +107,10 @@ function togglePasswordVisibility() {
           class="p-1.75 border border-gray-200 focus:outline-none"
           :class="sizeClass"
           :placeholder="placeholder || `Enter ${label.toLowerCase()}`"
+          :disabled="disabled"
+          :min="min"
+          :max="max"
+          :step="step"
           @input="updateValue($event)"
         />
 

@@ -28,7 +28,6 @@ const title = computed(() => isEditMode.value ? 'Edit User' : 'Create User')
 const roleOptions = [
   { value: '', label: '-' },
   { value: 'company_admin', label: 'Company admin' },
-  { value: 'team_lead', label: 'Team lead' },
   { value: 'worker', label: 'Worker' },
 ]
 const statusOptions = [

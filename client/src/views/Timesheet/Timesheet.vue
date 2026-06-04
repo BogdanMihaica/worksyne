@@ -18,7 +18,7 @@ const isCompanyAdmin = computed(() => authStore.userRole.value === 'company_admi
 const canRequestTimeoff = computed(() => {
   const companyRole = authStore.state.user?.company_user?.role || authStore.userRole.value
 
-  return ['team_lead', 'worker'].includes(companyRole)
+  return companyRole === 'worker'
 })
 
 const rows = computed(() => {

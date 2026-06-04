@@ -67,6 +67,12 @@ const routes = [
     roles: ['company_admin'],
   },
   {
+    name: 'capacity-models',
+    label: 'Capacity Models',
+    icon: 'pi pi-gauge',
+    roles: ['company_admin'],
+  },
+  {
     name: 'order-history',
     label: 'Order History',
     icon: 'pi pi-history',
@@ -94,19 +100,19 @@ const routes = [
     name: 'profile',
     label: 'Profile',
     icon: 'pi pi-user',
-    roles: ['company_admin', 'team_lead', 'worker'],
+    roles: ['company_admin', 'worker'],
   },
   {
     name: 'timesheet',
     label: 'Timesheet',
     icon: 'pi pi-clock',
-    roles: ['company_admin', 'team_lead', 'worker'],
+    roles: ['company_admin', 'worker'],
   },
   {
     name: 'work-log',
-    label: 'Work Log',
+    label: 'Log Work',
     icon: 'pi pi-clipboard',
-    roles: ['company_admin', 'team_lead', 'worker'],
+    roles: ['company_admin', 'worker'],
   },
   {
     name: 'analytics',

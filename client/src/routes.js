@@ -24,6 +24,7 @@ import CompanyWorkLogs from './views/CompanyWorkLogs/CompanyWorkLogs.vue'
 import Profile from './views/Profile/Profile.vue'
 import Analytics from './views/Analytics/Analytics.vue'
 import WorkLog from './views/WorkLog/WorkLog.vue'
+import CapacityModels from './views/CapacityModels/CapacityModels.vue'
 
 export const routes = [
   {
@@ -222,6 +223,15 @@ export const routes = [
         },
       },
       {
+        path: 'capacity-models',
+        name: 'capacity-models',
+        component: CapacityModels,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+        },
+      },
+      {
         path: 'order-history',
         name: 'order-history',
         component: OrderHistory,
@@ -263,7 +273,7 @@ export const routes = [
         component: Profile,
         meta: {
           requiresAuth: true,
-          roles: ['company_admin', 'team_lead', 'worker'],
+          roles: ['company_admin', 'worker'],
         },
       },
       {
@@ -272,7 +282,7 @@ export const routes = [
         component: Timesheet,
         meta: {
           requiresAuth: true,
-          roles: ['company_admin', 'team_lead', 'worker'],
+          roles: ['company_admin', 'worker'],
         },
       },
       {
@@ -281,7 +291,7 @@ export const routes = [
         component: WorkLog,
         meta: {
           requiresAuth: true,
-          roles: ['company_admin', 'team_lead', 'worker'],
+          roles: ['company_admin', 'worker'],
         },
       },
       {
