@@ -89,7 +89,7 @@ class UserController extends ApiResourceController
             'company_user' => ['sometimes', 'array'],
             'company_user.company_id' => ['nullable', 'integer', 'exists:company,id'],
             'company_user.external_id' => ['nullable', 'string', 'max:255'],
-            'company_user.role' => ['nullable', Rule::in(['company_admin', 'team_lead', 'worker'])],
+            'company_user.role' => ['nullable', Rule::in(['company_admin', 'worker'])],
             'company_user.status' => ['nullable', Rule::in(['pending', 'approved', 'rejected'])],
         ];
     }
@@ -108,7 +108,7 @@ class UserController extends ApiResourceController
             'company_user' => ['sometimes', 'array'],
             'company_user.company_id' => ['nullable', 'integer', 'exists:company,id'],
             'company_user.external_id' => ['nullable', 'string', 'max:255'],
-            'company_user.role' => ['nullable', Rule::in(['company_admin', 'team_lead', 'worker'])],
+            'company_user.role' => ['nullable', Rule::in(['company_admin', 'worker'])],
             'company_user.status' => ['nullable', Rule::in(['pending', 'approved', 'rejected'])],
         ];
     }

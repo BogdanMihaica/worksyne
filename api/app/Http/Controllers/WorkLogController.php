@@ -220,6 +220,10 @@ class WorkLogController extends Controller
 
         $workstreams = Workstream::query()
             ->where('company_id', $companyId)
+            ->whereHas('seniorities', function ($query) use ($companyId, $request) {
+                $query->where('company_id', $companyId)
+                    ->where('user_id', $request->user()->id);
+            })
             ->orderBy('name')
             ->get();
 
@@ -241,6 +245,9 @@ class WorkLogController extends Controller
                 'required',
                 'integer',
                 Rule::exists('workstream', 'id')->where('company_id', $companyId),
+                Rule::exists('company_user_seniority', 'workstream_id')
+                    ->where('company_id', $companyId)
+                    ->where('user_id', $request->user()->id),
             ],
             'unique_code' => ['nullable', 'string', 'max:255', 'unique:user_workstream,unique_code'],
             'units' => ['required', 'integer', 'min:1', 'max:65535'],
@@ -280,6 +287,9 @@ class WorkLogController extends Controller
                 'required',
                 'integer',
                 Rule::exists('workstream', 'id')->where('company_id', $companyId),
+                Rule::exists('company_user_seniority', 'workstream_id')
+                    ->where('company_id', $companyId)
+                    ->where('user_id', $request->user()->id),
             ],
             'unique_code' => [
                 'sometimes',

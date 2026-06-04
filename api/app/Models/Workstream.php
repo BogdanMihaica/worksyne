@@ -23,6 +23,11 @@ class Workstream extends Model
         return $this->hasMany(CompanyUserSeniority::class);
     }
 
+    public function capacityModels(): HasMany
+    {
+        return $this->hasMany(CapacityModel::class);
+    }
+
     public function userWorkstreams(): HasMany
     {
         return $this->hasMany(UserWorkstream::class);

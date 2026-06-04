@@ -57,7 +57,7 @@ class CompanyUserController extends ApiResourceController
             'company_id' => ['nullable', 'integer', 'exists:company,id'],
             'external_id' => ['nullable', 'string', 'max:255'],
             'user_id' => ['sometimes', 'nullable', 'integer', 'exists:user,id'],
-            'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
+            'role' => ['sometimes', 'required', Rule::in(['company_admin', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
         ];
     }
@@ -68,7 +68,7 @@ class CompanyUserController extends ApiResourceController
             'company_id' => ['sometimes', 'nullable', 'integer', 'exists:company,id'],
             'external_id' => ['sometimes', 'nullable', 'string', 'max:255'],
             'user_id' => ['sometimes', 'nullable', 'integer', 'exists:user,id'],
-            'role' => ['sometimes', 'required', Rule::in(['company_admin', 'team_lead', 'worker'])],
+            'role' => ['sometimes', 'required', Rule::in(['company_admin', 'worker'])],
             'status' => ['sometimes', 'required', Rule::in(['pending', 'approved', 'rejected'])],
         ];
     }

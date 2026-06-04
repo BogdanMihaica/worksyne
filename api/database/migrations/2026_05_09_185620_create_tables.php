@@ -65,7 +65,7 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable();
             $table->string('external_id')->nullable();
 
-            $table->enum('role', ['company_admin', 'team_lead', 'worker'])->default('worker');
+            $table->enum('role', ['company_admin', 'worker'])->default('worker');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->timestamps();

@@ -50,6 +50,11 @@ class Company extends Model
         return $this->hasMany(CompanyUserSeniority::class);
     }
 
+    public function capacityModels(): HasMany
+    {
+        return $this->hasMany(CapacityModel::class);
+    }
+
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);

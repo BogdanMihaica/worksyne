@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\CapacityModelController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
@@ -44,9 +45,11 @@ Route::middleware('auth.token')->group(function () {
         Route::get('company-work-logs', [WorkLogController::class, 'companyIndex']);
         Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions']);
         Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary']);
+        Route::get('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'forWorkstream']);
+        Route::put('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'updateForWorkstream']);
     });
 
-    Route::middleware('role:company_admin,team_lead,worker')->group(function () {
+    Route::middleware('role:company_admin,worker')->group(function () {
         Route::get('timelog/status', [TimelogController::class, 'status']);
         Route::post('timelog/start', [TimelogController::class, 'start']);
         Route::patch('timelog/stop', [TimelogController::class, 'stop']);

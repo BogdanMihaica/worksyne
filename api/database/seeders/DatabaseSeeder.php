@@ -213,7 +213,7 @@ class DatabaseSeeder extends Seeder
 
         $memberships = [
             ['email' => 'alex.manager@worksyne.local.test', 'role' => 'company_admin', 'status' => 'approved'],
-            ['email' => 'maria.lead@worksyne.local.test', 'role' => 'team_lead', 'status' => 'approved'],
+            ['email' => 'maria.lead@worksyne.local.test', 'role' => 'worker', 'status' => 'approved'],
             ['email' => 'sam.worker@worksyne.local.test', 'role' => 'worker', 'status' => 'approved'],
             ['email' => 'nina.worker@worksyne.local.test', 'role' => 'worker', 'status' => 'pending'],
         ];
