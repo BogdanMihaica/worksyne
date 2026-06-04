@@ -12,6 +12,7 @@ use App\Http\Controllers\CompanyNotificationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
@@ -36,6 +37,9 @@ Route::middleware('auth.token')->group(function () {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::get('dashboard', [DashboardController::class, 'show']);
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead']);
+    Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead']);
 
     Route::middleware('role:admin')->group(function () {
         Route::get('analytics', [AnalyticsController::class, 'index']);
