@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Notification;
 use App\Models\UserWorkstream;
 use App\Services\CompanyWorkloadForecaster;
@@ -17,7 +18,7 @@ class DashboardController extends Controller
         $role = $user->is_admin ? 'admin' : ($user->companyUser?->role ?? 'user');
         $companyId = $user->companyUser?->company_id;
 
-        $forecast = $role === 'company_admin' && $companyId
+        $forecast = $role === 'company_admin' && $companyId && $this->companyHasFeature($companyId, 'dashboard-flashcards')
             ? $forecaster->forecast($companyId)
             : null;
 
@@ -52,6 +53,14 @@ class DashboardController extends Controller
             ->where('to_id', $userId)
             ->where('is_read', false)
             ->count();
+    }
+
+    private function companyHasFeature(int $companyId, string $featureKey): bool
+    {
+        return Company::query()
+            ->whereKey($companyId)
+            ->whereHas('subscriptionPlan.features', fn ($query) => $query->where('key', $featureKey))
+            ->exists();
     }
 
     private function forecastFlashcards(array $forecast): array

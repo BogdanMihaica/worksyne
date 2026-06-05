@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,12 @@ class CompanyNotificationController extends Controller
         if (! $companyId) {
             return response()->json([
                 'message' => 'Forbidden.',
+            ], 403);
+        }
+
+        if (! $this->companyHasFeature($companyId, 'notifications')) {
+            return response()->json([
+                'message' => 'Upgrade to Pro to use notifications.',
             ], 403);
         }
 
@@ -51,6 +58,12 @@ class CompanyNotificationController extends Controller
         if (! $companyId) {
             return response()->json([
                 'message' => 'Forbidden.',
+            ], 403);
+        }
+
+        if (! $this->companyHasFeature($companyId, 'notifications')) {
+            return response()->json([
+                'message' => 'Upgrade to Pro to use notifications.',
             ], 403);
         }
 
@@ -93,5 +106,13 @@ class CompanyNotificationController extends Controller
             ->join('company_user', 'company_user.id', '=', 'user.company_user_id')
             ->where('company_user.company_id', $companyId)
             ->where('company_user.status', 'approved');
+    }
+
+    private function companyHasFeature(int $companyId, string $featureKey): bool
+    {
+        return Company::query()
+            ->whereKey($companyId)
+            ->whereHas('subscriptionPlan.features', fn ($query) => $query->where('key', $featureKey))
+            ->exists();
     }
 }

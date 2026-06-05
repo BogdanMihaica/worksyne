@@ -73,7 +73,7 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user()->load(['companyUser.company']);
+        $user = $request->user()->load(['companyUser.company.subscriptionPlan.features']);
         $response = $user->toArray();
 
         $role = $user->is_admin ? 'admin' : 'user';
@@ -83,6 +83,9 @@ class AuthController extends Controller
         }
 
         $response['role'] = $role;
+        $response['active_features'] = $user->companyUser?->company?->subscriptionPlan
+            ? $user->companyUser->company->subscriptionPlan->features->pluck('key')->values()
+            : [];
 
         return response()->json($response);
     }

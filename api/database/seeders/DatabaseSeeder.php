@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Company;
 use App\Models\CompanyUser;
 use App\Models\CompanyUserSeniority;
-use App\Models\Feature;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Subscription;
@@ -26,6 +25,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(SubscriptionCatalogSeeder::class);
+
         $users = [
             'admin@worksyne.local.test' => User::query()->updateOrCreate(
                 ['email' => 'admin@worksyne.local.test'],
@@ -92,91 +93,25 @@ class DatabaseSeeder extends Seeder
                 'is_blocked' => false,
             ]);
 
-        $subscriptionPlans = [
-            'starter' => SubscriptionPlan::query()->updateOrCreate(
-                ['name' => 'Starter'],
-                ['price' => 29.00],
-            ),
-            'growth' => SubscriptionPlan::query()->updateOrCreate(
-                ['name' => 'Growth'],
-                ['price' => 79.00],
-            ),
-            'enterprise' => SubscriptionPlan::query()->updateOrCreate(
-                ['name' => 'Enterprise'],
-                ['price' => 199.00],
-            ),
-        ];
-
-        $features = [
-            'workstream-tracking' => Feature::query()->updateOrCreate(
-                ['key' => 'workstream-tracking'],
-                [
-                    'name' => 'Workstream tracking',
-                    'description' => 'Track workload by team and operating stream.',
-                ],
-            ),
-            'time-management' => Feature::query()->updateOrCreate(
-                ['key' => 'time-management'],
-                [
-                    'name' => 'Time management',
-                    'description' => 'Manage timesheets and worker availability.',
-                ],
-            ),
-            'planning' => Feature::query()->updateOrCreate(
-                ['key' => 'planning'],
-                [
-                    'name' => 'Planning',
-                    'description' => 'Plan upcoming workload and events.',
-                ],
-            ),
-            'analytics' => Feature::query()->updateOrCreate(
-                ['key' => 'analytics'],
-                [
-                    'name' => 'Analytics',
-                    'description' => 'Review operational and revenue metrics.',
-                ],
-            ),
-            'priority-support' => Feature::query()->updateOrCreate(
-                ['key' => 'priority-support'],
-                [
-                    'name' => 'Priority support',
-                    'description' => 'Get faster support for critical operating issues.',
-                ],
-            ),
-        ];
-
-        $subscriptionPlans['starter']->features()->sync([
-            $features['workstream-tracking']->id,
-            $features['time-management']->id,
-        ]);
-        $subscriptionPlans['growth']->features()->sync([
-            $features['workstream-tracking']->id,
-            $features['time-management']->id,
-            $features['planning']->id,
-            $features['analytics']->id,
-        ]);
-        $subscriptionPlans['enterprise']->features()->sync([
-            $features['workstream-tracking']->id,
-            $features['time-management']->id,
-            $features['planning']->id,
-            $features['analytics']->id,
-            $features['priority-support']->id,
-        ]);
+        $subscriptionPlans = SubscriptionPlan::query()
+            ->whereIn('name', ['Free', 'Pro', 'Enterprise'])
+            ->get()
+            ->keyBy(fn (SubscriptionPlan $plan) => strtolower($plan->name));
 
         $company = Company::query()->updateOrCreate(
             ['name' => 'Acme Operations'],
             [
                 'owner_id' => $users['alex.manager@worksyne.local.test']->id,
-                'subscription_plan_id' => $subscriptionPlans['growth']->id,
+                'subscription_plan_id' => $subscriptionPlans['pro']->id,
             ],
         );
 
         $additionalCompanies = collect([
-            ['name' => 'Northstar Logistics', 'plan' => 'starter'],
-            ['name' => 'Blue Harbor Support', 'plan' => 'growth'],
+            ['name' => 'Northstar Logistics', 'plan' => 'free'],
+            ['name' => 'Blue Harbor Support', 'plan' => 'pro'],
             ['name' => 'Summit Field Services', 'plan' => 'enterprise'],
-            ['name' => 'Cedarline Operations', 'plan' => 'starter'],
-            ['name' => 'Orbit Response Group', 'plan' => 'growth'],
+            ['name' => 'Cedarline Operations', 'plan' => 'free'],
+            ['name' => 'Orbit Response Group', 'plan' => 'pro'],
         ])->map(function (array $companyData, int $index) use ($fakerUsers, $subscriptionPlans) {
             return Company::query()->updateOrCreate(
                 ['name' => $companyData['name']],

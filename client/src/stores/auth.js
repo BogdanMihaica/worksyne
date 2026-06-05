@@ -31,6 +31,9 @@ export const authStore = {
   userEmail: computed(() => state.user?.email || ''),
   userRole: computed(() => state.user?.role || ''),
   isAdmin: computed(() => state.user?.role === 'admin'),
+  hasFeature(featureKey) {
+    return state.user?.active_features?.includes(featureKey) || false
+  },
 
   async signIn(credentials) {
     state.isLoading = true

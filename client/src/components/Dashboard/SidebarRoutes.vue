@@ -97,18 +97,21 @@ const routeGroups = [
         label: 'Capacity Models',
         icon: 'pi pi-gauge',
         roles: ['company_admin'],
+        feature: 'capacity-models',
       },
       {
         name: 'forecast',
         label: 'Forecast',
         icon: 'pi pi-chart-bar',
         roles: ['company_admin'],
+        feature: 'forecast',
       },
       {
         name: 'company-notifications',
         label: 'Notifications',
         icon: 'pi pi-bell',
         roles: ['company_admin'],
+        feature: 'notifications',
       },
       {
         name: 'order-history',
@@ -128,24 +131,28 @@ const routeGroups = [
         label: 'Timeoff Requests',
         icon: 'pi pi-calendar-clock',
         roles: ['company_admin'],
+        feature: 'company-timeoff',
       },
       {
         name: 'company-work-logs',
         label: 'Work Logs',
         icon: 'pi pi-list-check',
         roles: ['company_admin'],
+        feature: 'time-logging',
       },
       {
         name: 'timesheet',
         label: 'Timesheet',
         icon: 'pi pi-clock',
         roles: ['company_admin', 'worker'],
+        feature: 'company-timeoff',
       },
       {
         name: 'work-log',
         label: 'Log Work',
         icon: 'pi pi-clipboard',
         roles: ['company_admin', 'worker'],
+        feature: 'time-logging',
       },
     ],
   },
@@ -177,7 +184,12 @@ const sidebarGroups = computed(() => {
   return routeGroups
     .map((group) => ({
       ...group,
-      routes: group.routes.filter((item) => !item.roles || item.roles.includes(authStore.userRole.value)),
+      routes: group.routes.filter((item) => {
+        const hasRole = !item.roles || item.roles.includes(authStore.userRole.value)
+        const hasFeature = !item.feature || authStore.hasFeature(item.feature)
+
+        return hasRole && hasFeature
+      }),
     }))
     .filter((group) => group.routes.length > 0)
 })

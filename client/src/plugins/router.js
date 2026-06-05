@@ -38,6 +38,10 @@ router.beforeEach(async (to) => {
     return { name: 'dashboard' }
   }
 
+  if (to.meta.feature && !authStore.hasFeature(to.meta.feature)) {
+    return { name: 'upgrade' }
+  }
+
   if (to.meta.guestOnly && isAuthenticated) {
     return typeof to.query.redirect === 'string' ? to.query.redirect : { name: 'dashboard' }
   }

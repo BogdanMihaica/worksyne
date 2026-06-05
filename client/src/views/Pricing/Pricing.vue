@@ -7,8 +7,6 @@ import { useHttp } from '../../plugins/http'
 const http = useHttp()
 const plans = ref([])
 const loading = ref(false)
-const contactEmail = 'hello@worksyne.local.test'
-const contactHref = `mailto:${contactEmail}?subject=Worksyne%20pricing%20inquiry`
 
 onMounted(() => {
   loadPlans()
@@ -27,7 +25,8 @@ function formatPrice(price) {
   return new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0,
+    minimumFractionDigits: Number(price) % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
   }).format(Number(price))
 }
 </script>
@@ -59,10 +58,10 @@ function formatPrice(price) {
         <div class="max-w-3xl">
           <p class="text-sm font-semibold uppercase text-brand-700">Pricing</p>
           <h1 class="mt-4 text-4xl font-semibold leading-tight text-slate-950 sm:text-5xl">
-            Choose the operating plan that fits your teams.
+            Choose the Worksyne plan that fits your company.
           </h1>
           <p class="mt-5 text-lg leading-8 text-slate-600">
-            Start with the essentials, expand planning and analytics when your company needs deeper operational control.
+            Start free, unlock operational workflows with Pro, and add forecasting intelligence with Enterprise.
           </p>
         </div>
 
@@ -80,12 +79,12 @@ function formatPrice(price) {
               <h2 class="text-2xl font-semibold text-slate-950">{{ plan.name }}</h2>
               <div class="mt-4 flex items-end gap-2">
                 <span class="text-4xl font-semibold text-brand-900">{{ formatPrice(plan.price) }}</span>
-                <span class="pb-1 text-sm text-slate-500">/ month</span>
+                <span class="pb-1 text-sm text-slate-500">/ month per company</span>
               </div>
             </div>
 
             <div class="flex flex-1 flex-col justify-between pt-5">
-              <div class="grid gap-3">
+              <div v-if="plan.features.length" class="grid gap-3">
                 <div
                   v-for="feature in plan.features"
                   :key="feature.id"
@@ -102,10 +101,17 @@ function formatPrice(price) {
                   </div>
                 </div>
               </div>
+              <div v-else class="rounded-md bg-slate-50 p-4 text-sm leading-6 text-slate-500">
+                Includes the free company management features. Upgrade when you need time tracking, notifications, capacity models, or forecasting.
+              </div>
 
-              <a :href="contactHref" class="mt-8">
-                <Button label="Register your company" icon="pi pi-building" class="w-full bg-brand-900! text-white!" />
-              </a>
+              <RouterLink :to="{ name: 'sign-in' }" class="mt-8">
+                <Button
+                  :label="Number(plan.price) === 0 ? 'Start free' : 'Choose in app'"
+                  :icon="Number(plan.price) === 0 ? 'pi pi-building' : 'pi pi-crown'"
+                  class="w-full bg-brand-900! text-white!"
+                />
+              </RouterLink>
             </div>
           </div>
         </div>

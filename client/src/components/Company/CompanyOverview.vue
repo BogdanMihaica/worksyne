@@ -1,5 +1,7 @@
 <script setup>
+import Button from 'primevue/button'
 import { onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useHttp } from '../../plugins/http'
 
 const http = useHttp()
@@ -55,7 +57,18 @@ function formatDate(value) {
 
         <div class="grid gap-4 lg:grid-cols-2">
           <div class="rounded-md border border-slate-200 bg-white p-4">
-            <div class="text-sm font-semibold text-slate-600">Active subscription</div>
+            <div class="flex items-center justify-between gap-3">
+              <div class="text-sm font-semibold text-slate-600">Active subscription</div>
+              <RouterLink :to="{ name: 'upgrade' }">
+                <Button
+                  type="button"
+                  icon="pi pi-crown"
+                  label="Upgrade"
+                  size="small"
+                  class="bg-brand-900! text-white!"
+                />
+              </RouterLink>
+            </div>
             <div v-if="overview.active_subscription" class="mt-4 grid gap-2 text-sm text-slate-600">
               <div class="text-xl font-semibold text-slate-950">
                 {{ overview.active_subscription.subscription_plan.name }}

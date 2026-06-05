@@ -5,6 +5,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CapacityModelController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyForecastController;
+use App\Http\Controllers\CompanySubscriptionCheckoutController;
 use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
@@ -46,26 +47,28 @@ Route::middleware('auth.token')->group(function () {
     });
 
     Route::middleware('role:company_admin')->group(function () {
-        Route::get('company-forecast', [CompanyForecastController::class, 'show']);
-        Route::get('company-notifications/recipients', [CompanyNotificationController::class, 'recipients']);
-        Route::post('company-notifications', [CompanyNotificationController::class, 'store']);
+        Route::post('company-subscription/checkout', [CompanySubscriptionCheckoutController::class, 'store']);
+        Route::get('company-subscription/checkout/confirm', [CompanySubscriptionCheckoutController::class, 'confirm']);
         Route::get('company-overview', [CompanyOverviewController::class, 'show']);
-        Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet']);
-        Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex']);
-        Route::patch('company-timeoff-requests/{timeoffRequest}/status', [TimeoffRequestController::class, 'companyUpdateStatus']);
-        Route::get('company-work-logs', [WorkLogController::class, 'companyIndex']);
-        Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions']);
-        Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary']);
-        Route::get('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'forWorkstream']);
-        Route::put('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'updateForWorkstream']);
+        Route::get('company-forecast', [CompanyForecastController::class, 'show'])->middleware('feature:forecast');
+        Route::get('company-notifications/recipients', [CompanyNotificationController::class, 'recipients'])->middleware('feature:notifications');
+        Route::post('company-notifications', [CompanyNotificationController::class, 'store'])->middleware('feature:notifications');
+        Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet'])->middleware('feature:company-timeoff');
+        Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex'])->middleware('feature:company-timeoff');
+        Route::patch('company-timeoff-requests/{timeoffRequest}/status', [TimeoffRequestController::class, 'companyUpdateStatus'])->middleware('feature:company-timeoff');
+        Route::get('company-work-logs', [WorkLogController::class, 'companyIndex'])->middleware('feature:time-logging');
+        Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions'])->middleware('feature:time-logging');
+        Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary'])->middleware('feature:time-logging');
+        Route::get('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'forWorkstream'])->middleware('feature:capacity-models');
+        Route::put('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'updateForWorkstream'])->middleware('feature:capacity-models');
     });
 
     Route::middleware('role:company_admin,worker')->group(function () {
-        Route::get('timelog/status', [TimelogController::class, 'status']);
-        Route::post('timelog/start', [TimelogController::class, 'start']);
-        Route::patch('timelog/stop', [TimelogController::class, 'stop']);
-        Route::post('timelog/break', [TimelogController::class, 'startBreak']);
-        Route::patch('timelog/resume', [TimelogController::class, 'resume']);
+        Route::get('timelog/status', [TimelogController::class, 'status'])->middleware('feature:time-logging');
+        Route::post('timelog/start', [TimelogController::class, 'start'])->middleware('feature:time-logging');
+        Route::patch('timelog/stop', [TimelogController::class, 'stop'])->middleware('feature:time-logging');
+        Route::post('timelog/break', [TimelogController::class, 'startBreak'])->middleware('feature:time-logging');
+        Route::patch('timelog/resume', [TimelogController::class, 'resume'])->middleware('feature:time-logging');
     });
 
     Route::apiResource('companies', CompanyController::class);
@@ -78,11 +81,11 @@ Route::middleware('auth.token')->group(function () {
     Route::apiResource('subscriptions', SubscriptionController::class);
     Route::apiResource('subscription-plans', SubscriptionPlanController::class);
     Route::apiResource('subscription-plan-features', SubscriptionPlanFeatureController::class);
-    Route::apiResource('timeoff-requests', TimeoffRequestController::class);
-    Route::get('work-log/workstreams', [WorkLogController::class, 'workstreams']);
-    Route::get('work-log', [WorkLogController::class, 'index']);
-    Route::post('work-log', [WorkLogController::class, 'store']);
-    Route::put('work-log/{id}', [WorkLogController::class, 'update']);
+    Route::apiResource('timeoff-requests', TimeoffRequestController::class)->middleware('feature:company-timeoff');
+    Route::get('work-log/workstreams', [WorkLogController::class, 'workstreams'])->middleware('feature:time-logging');
+    Route::get('work-log', [WorkLogController::class, 'index'])->middleware('feature:time-logging');
+    Route::post('work-log', [WorkLogController::class, 'store'])->middleware('feature:time-logging');
+    Route::put('work-log/{id}', [WorkLogController::class, 'update'])->middleware('feature:time-logging');
     Route::get('users/without-company', [UserController::class, 'withoutCompany']);
     Route::apiResource('users', UserController::class);
     Route::apiResource('user-workstreams', UserWorkstreamController::class);

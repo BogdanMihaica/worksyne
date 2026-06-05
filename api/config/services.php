@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'secret_key' => env('STRIPE_SECRET_KEY'),
+        'pro_price_id' => env('STRIPE_PRO_PRICE_ID'),
+        'enterprise_price_id' => env('STRIPE_ENTERPRISE_PRICE_ID'),
+        'success_url' => env('STRIPE_SUCCESS_URL', env('CLIENT_URL', 'https://worksyne.local.test').'/dashboard/upgrade?checkout=success&session_id={CHECKOUT_SESSION_ID}'),
+        'cancel_url' => env('STRIPE_CANCEL_URL', env('CLIENT_URL', 'https://worksyne.local.test').'/dashboard/upgrade?checkout=cancelled'),
+    ],
 ];

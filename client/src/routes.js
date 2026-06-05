@@ -27,6 +27,7 @@ import WorkLog from './views/WorkLog/WorkLog.vue'
 import CapacityModels from './views/CapacityModels/CapacityModels.vue'
 import Forecast from './views/Forecast/Forecast.vue'
 import CompanyNotifications from './views/CompanyNotifications/CompanyNotifications.vue'
+import Upgrade from './views/Upgrade/Upgrade.vue'
 
 export const routes = [
   {
@@ -231,6 +232,7 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
+          feature: 'capacity-models',
         },
       },
       {
@@ -240,12 +242,23 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
+          feature: 'forecast',
         },
       },
       {
         path: 'notifications',
         name: 'company-notifications',
         component: CompanyNotifications,
+        meta: {
+          requiresAuth: true,
+          roles: ['company_admin'],
+          feature: 'notifications',
+        },
+      },
+      {
+        path: 'upgrade',
+        name: 'upgrade',
+        component: Upgrade,
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
@@ -258,6 +271,7 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
+          feature: 'company-timeoff',
         },
       },
       {
@@ -267,6 +281,7 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
+          feature: 'time-logging',
         },
       },
       {
@@ -294,6 +309,7 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin', 'worker'],
+          feature: 'company-timeoff',
         },
       },
       {
@@ -303,6 +319,7 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin', 'worker'],
+          feature: 'time-logging',
         },
       },
       {

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -29,6 +29,8 @@ const userEmail = computed(() => authStore.userEmail.value)
 const sidebarWidthClass = computed(() => (isSidebarCollapsed.value ? 'lg:w-20' : 'lg:w-68'))
 const contentOffsetClass = computed(() => (isSidebarCollapsed.value ? 'lg:pl-20' : 'lg:pl-68'))
 const showBackButton = computed(() => route.name !== 'dashboard')
+const canUseNotifications = computed(() => authStore.hasFeature('notifications'))
+const showUpgradeButton = computed(() => authStore.userRole.value === 'company_admin')
 
 const menuItems = [
   {
@@ -192,7 +194,17 @@ function formatNotificationDate(value) {
         <div class="flex flex-wrap items-center justify-end gap-3">
           <work-timer />
 
-          <div class="relative">
+          <RouterLink v-if="showUpgradeButton" :to="{ name: 'upgrade' }">
+            <Button
+              type="button"
+              icon="pi pi-crown"
+              label="Upgrade"
+              size="small"
+              class="bg-brand-900! text-white!"
+            />
+          </RouterLink>
+
+          <div v-if="canUseNotifications" class="relative">
             <Button
               type="button"
               icon="pi pi-bell"
