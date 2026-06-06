@@ -4,7 +4,6 @@ import { RouterLink } from 'vue-router'
 
 const contactEmail = 'hello@worksyne.local.test'
 const registerHref = `mailto:${contactEmail}?subject=Register%20my%20company%20on%20Worksyne`
-const contactHref = `mailto:${contactEmail}?subject=Worksyne%20enterprise%20inquiry`
 
 const metrics = [
   { label: 'Active operators', value: '4,280' },
@@ -39,31 +38,7 @@ const rows = [
 
 <template>
   <div class="min-h-screen bg-[#f7f8fb] text-slate-950">
-    <div class="border-b border-slate-200 bg-white/95">
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-        <RouterLink :to="{ name: 'landing' }" class="flex items-center gap-3">
-          <span class="grid h-10 w-10 place-items-center rounded-md bg-brand-900 text-white">
-            <i class="pi pi-briefcase text-lg" />
-          </span>
-          <span class="text-base font-semibold tracking-[0.08em] text-brand-900">WORKSYNE</span>
-        </RouterLink>
-
-        <div class="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
-          <a href="#platform" class="hover:text-slate-950">Platform</a>
-          <RouterLink :to="{ name: 'pricing' }" class="hover:text-slate-950">Pricing</RouterLink>
-          <a href="#contact" class="hover:text-slate-950">Contact</a>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <RouterLink :to="{ name: 'sign-in' }">
-            <Button label="Sign in" text class="text-slate-700!" />
-          </RouterLink>
-          <a :href="registerHref" class="hidden sm:inline-flex">
-            <Button label="Register company" icon="pi pi-arrow-right" icon-pos="right" class="bg-brand-900! text-white!" />
-          </a>
-        </div>
-      </div>
-    </div>
+    <public-navigation />
 
     <div class="bg-[#f7f8fb] px-5 py-10 lg:px-8 lg:py-16">
       <div class="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.92fr_1.08fr]">
@@ -85,9 +60,9 @@ const rows = [
             <a :href="registerHref">
               <Button label="Register your company" icon="pi pi-building" outlined class="w-full sm:w-auto" size="large" />
             </a>
-            <a href="#contact">
+            <RouterLink :to="{ name: 'contact' }">
               <Button label="Contact" icon="pi pi-envelope" text class="w-full text-brand-800! sm:w-auto" size="large" />
-            </a>
+            </RouterLink>
           </div>
 
           <div class="mt-10 grid gap-3 sm:grid-cols-3">
@@ -193,9 +168,9 @@ const rows = [
           <a :href="registerHref">
             <Button label="Register your company" icon="pi pi-building" class="w-full bg-brand-900! text-white! sm:w-auto" />
           </a>
-          <a :href="contactHref">
+          <RouterLink :to="{ name: 'contact' }">
             <Button label="Contact" icon="pi pi-send" outlined class="w-full sm:w-auto" />
-          </a>
+          </RouterLink>
         </div>
       </div>
     </div>

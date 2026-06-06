@@ -195,12 +195,13 @@ function formatNotificationDate(value) {
           <work-timer />
 
           <RouterLink v-if="showUpgradeButton" :to="{ name: 'upgrade' }">
-            <Button
+            <form-button
               type="button"
-              icon="pi pi-crown"
+              icon="crown"
+              icon-color="#eab308"
               label="Upgrade"
-              size="small"
-              class="bg-brand-900! text-white!"
+              severity="secondary"
+              size="md"
             />
           </RouterLink>
 

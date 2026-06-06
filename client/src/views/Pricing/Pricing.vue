@@ -33,25 +33,7 @@ function formatPrice(price) {
 
 <template>
   <div class="min-h-screen bg-[#f7f8fb] text-slate-950">
-    <div class="border-b border-slate-200 bg-white/95">
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-        <RouterLink :to="{ name: 'landing' }" class="flex items-center gap-3">
-          <span class="grid h-10 w-10 place-items-center rounded-md bg-brand-900 text-white">
-            <i class="pi pi-briefcase text-lg" />
-          </span>
-          <span class="text-base font-semibold tracking-[0.08em] text-brand-900">WORKSYNE</span>
-        </RouterLink>
-
-        <div class="flex items-center gap-2">
-          <RouterLink :to="{ name: 'landing' }">
-            <Button label="Platform" text class="text-slate-700!" />
-          </RouterLink>
-          <RouterLink :to="{ name: 'sign-in' }">
-            <Button label="Sign in" text class="text-slate-700!" />
-          </RouterLink>
-        </div>
-      </div>
-    </div>
+    <public-navigation />
 
     <div class="px-5 py-14 lg:px-8">
       <div class="mx-auto max-w-7xl">

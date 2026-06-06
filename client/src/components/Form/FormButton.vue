@@ -20,6 +20,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  iconColor: {
+    type: String,
+    default: 'inherit'
+  }
 })
 
 const sizeClass = computed(() => {
@@ -58,7 +62,7 @@ const severityClass = computed(() => {
       loading ? 'opacity-60 pointer-events-none' : '',
     ]"
   >
-    <app-icon v-if="icon && !loading" :icon="icon" :class="label ? 'mr-2' : ''" />
+    <app-icon v-if="icon && !loading" :icon="icon" :class="label ? 'mr-2' : ''" :color="iconColor"/>
 
     <app-icon v-if="loading" class="animate-spin" icon="spinner" :class="label ? 'mr-2' : ''" />
 

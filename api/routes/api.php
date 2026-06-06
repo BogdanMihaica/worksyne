@@ -10,6 +10,7 @@ use App\Http\Controllers\CompanyOverviewController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\CompanyUserSeniorityController;
 use App\Http\Controllers\CompanyNotificationController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\OrderController;
@@ -32,6 +33,7 @@ Route::get('/health', function () {
     ]);
 });
 Route::get('pricing', [PricingController::class, 'index']);
+Route::post('contact', ContactController::class)->middleware('throttle:5,1');
 
 Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::middleware('auth.token')->group(function () {
@@ -49,6 +51,7 @@ Route::middleware('auth.token')->group(function () {
     Route::middleware('role:company_admin')->group(function () {
         Route::post('company-subscription/checkout', [CompanySubscriptionCheckoutController::class, 'store']);
         Route::get('company-subscription/checkout/confirm', [CompanySubscriptionCheckoutController::class, 'confirm']);
+        Route::post('company-subscription/downgrade', [CompanySubscriptionCheckoutController::class, 'downgrade']);
         Route::get('company-overview', [CompanyOverviewController::class, 'show']);
         Route::get('company-forecast', [CompanyForecastController::class, 'show'])->middleware('feature:forecast');
         Route::get('company-notifications/recipients', [CompanyNotificationController::class, 'recipients'])->middleware('feature:notifications');

@@ -14,9 +14,27 @@ const plans = ref([])
 const loading = ref(false)
 const confirming = ref(false)
 const checkoutPlanId = ref(null)
+const downgrading = ref(false)
+const showDowngradeConfirmation = ref(false)
 
-const paidPlans = computed(() => plans.value.filter((plan) => Number(plan.price) > 0))
 const currentPlanName = computed(() => authStore.state.user?.company_user?.company?.subscription_plan?.name || '')
+const freePlanFeatures = [
+  {
+    id: 'free-company',
+    name: 'Company management',
+    description: 'Manage your company profile and core workspace settings.',
+  },
+  {
+    id: 'free-users',
+    name: 'Team management',
+    description: 'Add and manage company users, roles, and approval status.',
+  },
+  {
+    id: 'free-workstreams',
+    name: 'Workstream management',
+    description: 'Create workstreams and organize users across your operation.',
+  },
+]
 
 onMounted(async () => {
   await loadPlans()
@@ -76,11 +94,42 @@ async function confirmCheckout(sessionId) {
   }
 }
 
+async function downgradeToFree() {
+  downgrading.value = true
+
+  try {
+    const { data } = await http.post('/api/company-subscription/downgrade')
+
+    await authStore.fetchUser()
+    showDowngradeConfirmation.value = false
+    toast({ type: 'success', message: data.message })
+  } catch (error) {
+    toast({ type: 'error', message: error.response?.data?.message || 'Unable to switch to the Free plan.' })
+  } finally {
+    downgrading.value = false
+  }
+}
+
 function formatPrice(price) {
   return new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: 'USD',
   }).format(Number(price))
+}
+
+function planFeatures(plan) {
+  if (Number(plan.price) === 0) {
+    return freePlanFeatures
+  }
+
+  return [
+    {
+      id: `${plan.id}-free-plan`,
+      name: 'Everything from the Free Plan',
+      description: 'Includes company, team, and workstream management.',
+    },
+    ...plan.features,
+  ]
 }
 </script>
 
@@ -100,8 +149,8 @@ function formatPrice(price) {
       {{ confirming ? 'Confirming checkout...' : 'Loading plans...' }}
     </div>
 
-    <div v-else class="grid gap-5 lg:grid-cols-2">
-      <app-card v-for="plan in paidPlans" :key="plan.id">
+    <div v-else class="grid gap-5 lg:grid-cols-3">
+      <app-card v-for="plan in plans" :key="plan.id">
         <template #title>
           {{ plan.name }}
         </template>
@@ -115,7 +164,7 @@ function formatPrice(price) {
 
             <div class="grid gap-3">
               <div
-                v-for="feature in plan.features"
+                v-for="feature in planFeatures(plan)"
                 :key="feature.id"
                 class="flex gap-3 rounded-md bg-slate-50 p-3"
               >
@@ -128,6 +177,7 @@ function formatPrice(price) {
             </div>
 
             <Button
+              v-if="Number(plan.price) > 0"
               type="button"
               icon="pi pi-crown"
               :label="currentPlanName === plan.name ? 'Current plan' : `Buy ${plan.name}`"
@@ -136,9 +186,31 @@ function formatPrice(price) {
               class="w-full bg-brand-900! text-white!"
               @click="startCheckout(plan)"
             />
+            <Button
+              v-else
+              type="button"
+              icon="pi pi-arrow-down"
+              :label="currentPlanName === plan.name ? 'Current plan' : 'Switch to Free'"
+              :disabled="currentPlanName === plan.name"
+              :loading="downgrading"
+              severity="secondary"
+              outlined
+              class="w-full"
+              @click="showDowngradeConfirmation = true"
+            />
           </div>
         </template>
       </app-card>
     </div>
+
+    <confirm-dialog
+      v-model="showDowngradeConfirmation"
+      title="Switch to Free plan?"
+      message="Your paid subscription will be canceled immediately and paid features will no longer be available."
+      confirm-label="Switch to Free"
+      confirm-severity="danger"
+      :loading="downgrading"
+      @confirm="downgradeToFree"
+    />
   </div>
 </template>

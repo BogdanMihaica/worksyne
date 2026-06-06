@@ -1,4 +1,5 @@
 import Landing from './views/Landing/Landing.vue'
+import Contact from './views/Contact/Contact.vue'
 import Pricing from './views/Pricing/Pricing.vue'
 import SignIn from './views/SignIn/SignIn.vue'
 import SignedInLayout from './layouts/SignedInLayout.vue'
@@ -45,6 +46,11 @@ export const routes = [
     meta: {
       guestOnly: true,
     },
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact,
   },
   {
     path: '/dashboard',

@@ -220,7 +220,7 @@ function isGroupActive(group) {
 </script>
 
 <template>
-  <div class="mt-8 space-y-3">
+  <div class="mt-8 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pb-4">
     <div v-for="group in sidebarGroups" :key="group.key" class="space-y-1">
       <button
         type="button"

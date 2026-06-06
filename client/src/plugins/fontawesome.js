@@ -2,6 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faBan,
   faCheck,
+  faCrown,
   faEye,
   faEyeSlash,
   faMagnifyingGlass,
@@ -16,6 +17,7 @@ import {
 export function registerFontAwesome() {
   library.add(
     faBan,
+    faCrown,
     faEye,
     faEyeSlash,
     faMagnifyingGlass,

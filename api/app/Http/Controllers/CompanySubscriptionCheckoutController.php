@@ -111,6 +111,7 @@ class CompanySubscriptionCheckoutController extends Controller
             $subscription = Subscription::query()->create([
                 'company_id' => $company->id,
                 'subscription_plan_id' => $order->subscription_plan_id,
+                'external_id' => $session['subscription'] ?? null,
                 'starts_at' => now()->toDateString(),
                 'ends_at' => null,
                 'status' => 'active',
@@ -134,6 +135,73 @@ class CompanySubscriptionCheckoutController extends Controller
 
         return response()->json([
             'message' => 'Subscription upgraded.',
+        ]);
+    }
+
+    public function downgrade(Request $request): JsonResponse
+    {
+        $company = $request->user()?->companyUser?->company;
+
+        if (! $company) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        $freePlan = SubscriptionPlan::query()
+            ->where('name', 'Free')
+            ->where('price', 0)
+            ->first();
+
+        if (! $freePlan) {
+            return response()->json([
+                'message' => 'The Free plan is not available.',
+            ], 422);
+        }
+
+        if ($company->subscription_plan_id === $freePlan->id) {
+            return response()->json([
+                'message' => 'Your company is already on the Free plan.',
+            ]);
+        }
+
+        $activeSubscription = Subscription::query()
+            ->where('company_id', $company->id)
+            ->where('status', 'active')
+            ->latest('id')
+            ->first();
+
+        try {
+            $stripeSubscriptionId = $this->resolveStripeSubscriptionId($activeSubscription);
+
+            if ($stripeSubscriptionId) {
+                $this->cancelStripeSubscription($stripeSubscriptionId);
+            }
+        } catch (RequestException $exception) {
+            return response()->json([
+                'message' => $exception->response->json('error.message') ?? 'Unable to cancel the Stripe subscription.',
+            ], 422);
+        }
+
+        DB::transaction(function () use ($activeSubscription, $company, $freePlan) {
+            if ($activeSubscription) {
+                $activeSubscription->update([
+                    'status' => 'canceled',
+                    'ends_at' => now()->toDateString(),
+                ]);
+            }
+
+            Subscription::query()->create([
+                'company_id' => $company->id,
+                'subscription_plan_id' => $freePlan->id,
+                'starts_at' => now()->toDateString(),
+                'ends_at' => null,
+                'status' => 'active',
+            ]);
+
+            $company->update(['subscription_plan_id' => $freePlan->id]);
+        });
+
+        return response()->json([
+            'message' => 'Your company is now on the Free plan.',
         ]);
     }
 
@@ -161,6 +229,48 @@ class CompanySubscriptionCheckoutController extends Controller
             ->get('https://api.stripe.com/v1/checkout/sessions/'.$sessionId)
             ->throw()
             ->json();
+    }
+
+    private function resolveStripeSubscriptionId(?Subscription $subscription): ?string
+    {
+        if (! $subscription) {
+            return null;
+        }
+
+        if ($subscription->external_id) {
+            return $subscription->external_id;
+        }
+
+        $checkoutSessionId = Payment::query()
+            ->where('subscription_id', $subscription->id)
+            ->with('order:id,external_id')
+            ->first()
+            ?->order
+            ?->external_id;
+
+        if (! $checkoutSessionId) {
+            return null;
+        }
+
+        if (! config('services.stripe.secret_key')) {
+            abort(422, 'Stripe is not configured.');
+        }
+
+        $session = $this->retrieveStripeCheckoutSession($checkoutSessionId);
+
+        return $session['subscription'] ?? null;
+    }
+
+    private function cancelStripeSubscription(string $subscriptionId): void
+    {
+        if (! config('services.stripe.secret_key')) {
+            abort(422, 'Stripe is not configured.');
+        }
+
+        Http::asForm()
+            ->withToken(config('services.stripe.secret_key'))
+            ->delete('https://api.stripe.com/v1/subscriptions/'.$subscriptionId)
+            ->throw();
     }
 
     private function stripePriceId(SubscriptionPlan $plan): ?string

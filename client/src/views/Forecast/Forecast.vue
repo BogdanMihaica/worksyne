@@ -9,6 +9,56 @@ const toast = useAppToast()
 const forecast = ref(null)
 const loading = ref(false)
 
+const gapSignal = computed(() => {
+  const gap = Number(forecast.value?.totals?.gap_units || 0)
+
+  if (gap < -1000) {
+    return {
+      title: 'Critical capacity shortage',
+      message: 'Forecast demand significantly exceeds available capacity. Immediate action is required.',
+      class: 'border-red-200 bg-red-50 text-red-950',
+    }
+  }
+
+  if (gap < -500) {
+    return {
+      title: 'High capacity shortage',
+      message: 'Forecast demand exceeds available capacity. Additional capacity should be planned.',
+      class: 'border-orange-200 bg-orange-50 text-orange-950',
+    }
+  }
+
+  if (gap < 0) {
+    return {
+      title: 'Capacity shortage',
+      message: 'Forecast demand is slightly above available capacity.',
+      class: 'border-amber-200 bg-amber-50 text-amber-950',
+    }
+  }
+
+  if (gap < 500) {
+    return {
+      title: 'Capacity is balanced',
+      message: 'Available capacity is closely aligned with forecast demand.',
+      class: 'border-emerald-200 bg-emerald-50 text-emerald-950',
+    }
+  }
+
+  if (gap < 1000) {
+    return {
+      title: 'Capacity underutilization',
+      message: 'Available capacity exceeds forecast demand. Consider reallocating resources.',
+      class: 'border-amber-200 bg-amber-50 text-amber-950',
+    }
+  }
+
+  return {
+    title: 'High capacity surplus',
+    message: 'Available capacity significantly exceeds forecast demand. Review staffing or workload allocation.',
+    class: 'border-red-200 bg-red-50 text-red-950',
+  }
+})
+
 const rows = computed(() => {
   return (forecast.value?.days || []).flatMap((day) => {
     return day.workstreams.map((workstream, index) => ({
@@ -64,8 +114,18 @@ function metricValue(value) {
 }
 
 function gapClass(value) {
-  if (Number(value || 0) < 0) {
+  const gap = Number(value || 0)
+
+  if (gap < -1000 || gap >= 1000) {
     return 'font-semibold text-red-700'
+  }
+
+  if (gap < -500) {
+    return 'font-semibold text-orange-700'
+  }
+
+  if (gap < 0 || gap >= 500) {
+    return 'font-semibold text-amber-700'
   }
 
   return 'font-semibold text-emerald-700'
@@ -107,6 +167,15 @@ function gapClass(value) {
               {{ metricValue(forecast?.totals?.gap_units) }}
             </div>
           </div>
+        </div>
+
+        <div
+          v-if="forecast && !loading"
+          class="mt-5 rounded-md border px-4 py-3"
+          :class="gapSignal.class"
+        >
+          <div class="text-sm font-semibold">{{ gapSignal.title }}</div>
+          <div class="mt-1 text-sm">{{ gapSignal.message }}</div>
         </div>
 
         <div class="mt-4 text-xs text-slate-500">

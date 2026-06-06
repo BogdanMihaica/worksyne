@@ -60,12 +60,13 @@ function formatDate(value) {
             <div class="flex items-center justify-between gap-3">
               <div class="text-sm font-semibold text-slate-600">Active subscription</div>
               <RouterLink :to="{ name: 'upgrade' }">
-                <Button
+                <form-button
                   type="button"
-                  icon="pi pi-crown"
+                  icon="crown"
+                  icon-color="#eab308"
                   label="Upgrade"
-                  size="small"
-                  class="bg-brand-900! text-white!"
+                  severity="secondary"
+                  size="md"
                 />
               </RouterLink>
             </div>

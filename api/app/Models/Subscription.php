@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'id',
     'company_id',
     'subscription_plan_id',
+    'external_id',
     'starts_at',
     'ends_at',
     'status',
