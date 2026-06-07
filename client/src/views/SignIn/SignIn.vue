@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import IconField from 'primevue/iconfield'
@@ -53,6 +52,7 @@ async function onSignIn() {
 <template>
   <div class="signin-backdrop relative min-h-screen overflow-hidden text-slate-950">
       <div class="signin-sheen absolute inset-0" />
+      <auth-home-button />
 
       <div class="relative z-1 flex min-h-screen items-center justify-center px-5 py-10 sm:px-8">
         <div class="w-full max-w-117.5">
@@ -122,13 +122,13 @@ async function onSignIn() {
                   </RouterLink>
                 </div>
 
-                <Button
+                <form-button
                   label="Sign in"
                   icon="pi pi-arrow-right"
-                  icon-pos="right"
+                  icon-position="right"
                   type="submit"
-                  class="w-full justify-center border-brand-900! bg-brand-700! text-white! hover:bg-brand-950!"
-                  size="large"
+                  class="w-full"
+                  size="lg"
                   :loading="isLoading"
                 />
               </form>

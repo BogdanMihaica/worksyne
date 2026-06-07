@@ -1,5 +1,4 @@
 <script setup>
-import Button from 'primevue/button'
 import { RouterLink } from 'vue-router'
 
 const contactEmail = 'hello@worksyne.local.test'
@@ -37,9 +36,7 @@ const rows = [
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f7f8fb] text-slate-950">
-    <public-navigation />
-
+  <div class="bg-[#f7f8fb] text-slate-950">
     <div class="bg-[#f7f8fb] px-5 py-10 lg:px-8 lg:py-16">
       <div class="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.92fr_1.08fr]">
         <div class="py-4">
@@ -55,13 +52,13 @@ const rows = [
 
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <RouterLink :to="{ name: 'sign-in' }">
-              <Button label="Sign in" icon="pi pi-sign-in" class="w-full bg-brand-900! text-white! sm:w-auto" size="large" />
+              <form-button label="Sign in" icon="pi pi-sign-in" class="w-full sm:w-auto" size="lg" />
             </RouterLink>
             <a :href="registerHref">
-              <Button label="Register your company" icon="pi pi-building" outlined class="w-full sm:w-auto" size="large" />
+              <form-button label="Register your company" icon="pi pi-building" severity="secondary" class="w-full sm:w-auto" size="lg" />
             </a>
             <RouterLink :to="{ name: 'contact' }">
-              <Button label="Contact" icon="pi pi-envelope" text class="w-full text-brand-800! sm:w-auto" size="large" />
+              <form-button label="Contact" icon="pi pi-envelope" severity="ternary" transparent class="w-full sm:w-auto" size="lg" />
             </RouterLink>
           </div>
 
@@ -118,7 +115,7 @@ const rows = [
                   </div>
                   <p class="text-sm text-white/55">{{ row.users }} users</p>
                   <p class="text-sm text-white/55">{{ row.load }} load</p>
-                  <Button icon="pi pi-arrow-right" text rounded severity="secondary" aria-label="View workstream" />
+                  <form-button icon="pi pi-arrow-right" severity="secondary" transparent aria-label="View workstream" />
                 </div>
               </div>
             </div>
@@ -166,10 +163,10 @@ const rows = [
 
         <div class="flex flex-col gap-3 sm:flex-row lg:justify-end">
           <a :href="registerHref">
-            <Button label="Register your company" icon="pi pi-building" class="w-full bg-brand-900! text-white! sm:w-auto" />
+            <form-button label="Register your company" icon="pi pi-building" class="w-full sm:w-auto" />
           </a>
           <RouterLink :to="{ name: 'contact' }">
-            <Button label="Contact" icon="pi pi-send" outlined class="w-full sm:w-auto" />
+            <form-button label="Contact" icon="pi pi-send" severity="secondary" class="w-full sm:w-auto" />
           </RouterLink>
         </div>
       </div>

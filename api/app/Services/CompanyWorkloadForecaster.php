@@ -165,13 +165,13 @@ class CompanyWorkloadForecaster
         $totals = UserWorkstream::query()
             ->select([
                 'user_workstream.workstream_id',
-                DB::raw('DAYOFWEEK(DATE(user_workstream.created_at)) as weekday'),
+                DB::raw('DAYOFWEEK(user_workstream.logged_on) as weekday'),
                 DB::raw('COALESCE(SUM(user_workstream.units), 0) as units'),
             ])
             ->join('workstream', 'workstream.id', '=', 'user_workstream.workstream_id')
             ->where('workstream.company_id', $companyId)
-            ->whereBetween('user_workstream.created_at', [$historyStart, $historyEnd])
-            ->groupBy('user_workstream.workstream_id', DB::raw('DAYOFWEEK(DATE(user_workstream.created_at))'))
+            ->whereBetween('user_workstream.logged_on', [$historyStart->toDateString(), $historyEnd->toDateString()])
+            ->groupBy('user_workstream.workstream_id', DB::raw('DAYOFWEEK(user_workstream.logged_on)'))
             ->get();
         return $totals
             ->groupBy('workstream_id')

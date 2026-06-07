@@ -49,9 +49,7 @@ async function submit() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f7f8fb] text-slate-950">
-    <public-navigation />
-
+  <div class="bg-[#f7f8fb] text-slate-950">
     <main class="px-5 py-12 lg:px-8 lg:py-18">
       <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
         <div class="pt-4">

@@ -133,7 +133,6 @@ function seniorityLabel(value) {
               v-model="capacityModel.units_per_hour"
               label="Units per hour"
               type="number"
-              required
               min="0"
               step="0.01"
               size="sm"

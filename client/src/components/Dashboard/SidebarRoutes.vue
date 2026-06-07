@@ -220,9 +220,11 @@ function isGroupActive(group) {
 <template>
   <div class="mt-8 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pb-4">
     <div v-for="group in sidebarGroups" :key="group.key" class="space-y-1">
-      <button
+      <form-button
         type="button"
         class="flex min-h-9 w-full items-center rounded-lg text-xs font-semibold uppercase text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+        severity="secondary"
+        transparent
         :class="[
           isCollapsed ? 'justify-center px-2' : 'gap-2 px-3',
           isGroupActive(group) ? 'text-brand-900' : '',
@@ -239,7 +241,7 @@ function isGroupActive(group) {
           class="pi text-[10px] transition-transform"
           :class="expandedGroups[group.key] ? 'pi-chevron-down' : 'pi-chevron-right'"
         />
-      </button>
+      </form-button>
 
       <div v-if="expandedGroups[group.key]" class="space-y-1">
         <RouterLink

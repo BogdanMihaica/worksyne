@@ -222,6 +222,7 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $users[$userWorkstream['email']]->id,
                     'workstream_id' => $workstreams[$userWorkstream['workstream']]->id,
                     'units' => $userWorkstream['units'],
+                    'logged_on' => today()->toDateString(),
                 ],
             );
         }

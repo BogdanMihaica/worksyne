@@ -1,5 +1,4 @@
 <script setup>
-import Button from 'primevue/button'
 import { RouterLink } from 'vue-router'
 
 const contactEmail = 'hello@worksyne.local.test'
@@ -20,6 +19,9 @@ const registerHref = `mailto:${contactEmail}?subject=Register%20my%20company%20o
         <RouterLink :to="{ name: 'landing', hash: '#platform' }" class="hover:text-slate-950">
           Platform
         </RouterLink>
+        <RouterLink :to="{ name: 'about' }" class="hover:text-slate-950">
+          About us
+        </RouterLink>
         <RouterLink :to="{ name: 'pricing' }" class="hover:text-slate-950">
           Pricing
         </RouterLink>
@@ -30,14 +32,13 @@ const registerHref = `mailto:${contactEmail}?subject=Register%20my%20company%20o
 
       <div class="flex items-center gap-2">
         <RouterLink :to="{ name: 'sign-in' }">
-          <Button label="Sign in" text class="text-slate-700!" />
+          <form-button label="Sign in" severity="secondary" transparent />
         </RouterLink>
         <a :href="registerHref" class="hidden sm:inline-flex">
-          <Button
+          <form-button
             label="Register company"
             icon="pi pi-arrow-right"
-            icon-pos="right"
-            class="bg-brand-900! text-white!"
+            icon-position="right"
           />
         </a>
       </div>

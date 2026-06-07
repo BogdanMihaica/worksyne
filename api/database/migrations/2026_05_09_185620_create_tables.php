@@ -95,6 +95,7 @@ return new class extends Migration
             $table->foreignId('workstream_id');
             $table->string('unique_code')->nullable()->unique();
             $table->unsignedSmallInteger('units')->default(1);
+            $table->date('logged_on');
             $table->string('reference_code')->nullable();
             $table->text('note')->nullable();
 

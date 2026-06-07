@@ -68,15 +68,14 @@ function flashcardIcon(severity) {
         <p class="text-sm text-slate-500">Today at a glance</p>
       </div>
 
-      <button
+      <form-button
         type="button"
-        class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+        label="Refresh"
+        icon="pi pi-refresh"
+        severity="secondary"
         :disabled="loading"
         @click="loadDashboard"
-      >
-        <i class="pi pi-refresh text-sm" :class="{ 'pi-spin': loading }" />
-        Refresh
-      </button>
+      />
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">

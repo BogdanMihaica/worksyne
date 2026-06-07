@@ -1,6 +1,5 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import Button from 'primevue/button'
 import { useHttp } from '../../plugins/http'
 import { useAppToast } from '../../plugins/toast'
 import { authStore } from '../../stores/auth'
@@ -178,12 +177,12 @@ function timestamp(value) {
 
 <template>
   <div v-if="shouldShow" class="relative flex flex-wrap items-center justify-end gap-2">
-    <Button
+    <form-button
       v-if="!isWorking"
       type="button"
       label="Start work"
       icon="pi pi-play"
-      size="small"
+      size="md"
       :loading="loading"
       @click="startWork"
     />
@@ -193,33 +192,33 @@ function timestamp(value) {
         {{ formattedElapsed }}
       </div>
 
-      <Button
+      <form-button
         type="button"
         label="Stop work"
         icon="pi pi-stop"
-        size="small"
+        size="md"
         severity="danger"
         :loading="loading"
         @click="stopWork"
       />
 
-      <Button
+      <form-button
         v-if="!isOnBreak"
         type="button"
         label="Break"
         icon="pi pi-pause"
-        size="small"
+        size="md"
         severity="secondary"
         :disabled="loading"
         @click="breakOpen = !breakOpen"
       />
 
-      <Button
+      <form-button
         v-else
         type="button"
         label="Resume"
         icon="pi pi-play"
-        size="small"
+        size="md"
         severity="success"
         :loading="loading"
         @click="resumeWork"
@@ -240,18 +239,17 @@ function timestamp(value) {
       </label>
 
       <div class="mt-3 flex justify-end gap-2">
-        <Button
+        <form-button
           type="button"
           label="Cancel"
-          size="small"
+          size="md"
           severity="secondary"
-          outlined
           @click="breakOpen = false"
         />
-        <Button
+        <form-button
           type="button"
           label="Proceed"
-          size="small"
+          size="md"
           :loading="loading"
           @click="proceedBreak"
         />

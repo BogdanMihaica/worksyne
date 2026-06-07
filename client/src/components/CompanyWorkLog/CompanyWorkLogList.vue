@@ -38,7 +38,8 @@ const columns = [
     header: 'Note',
     format: value => value || '-',
   },
-  { field: 'created_at', header: 'Logged at', sortable: true, date: true },
+  { field: 'logged_on', header: 'Work day', sortable: true, date: true },
+  { field: 'created_at', header: 'Created at', date: true },
   { field: 'updated_at', header: 'Updated at', sortable: true, date: true },
 ]
 
@@ -248,7 +249,7 @@ function topDetail(item) {
           :key="gridKey"
           :columns="columns"
           url="/api/company-work-logs"
-          default-sort-field="created_at"
+          default-sort-field="logged_on"
           default-sort-order="desc"
           :filters="filters"
         />

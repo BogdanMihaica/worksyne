@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Avatar from 'primevue/avatar'
-import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Menu from 'primevue/menu'
 import Popover from 'primevue/popover'
@@ -173,12 +172,11 @@ function formatNotificationDate(value) {
           </span>
         </div>
 
-        <Button
+        <form-button
           type="button"
           :icon="isSidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
           severity="secondary"
-          text
-          rounded
+          transparent
           :aria-label="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
           @click="toggleSidebar"
         />
@@ -207,12 +205,11 @@ function formatNotificationDate(value) {
           </RouterLink>
 
           <div v-if="canUseNotifications" class="relative">
-            <Button
+            <form-button
               type="button"
               icon="pi pi-bell"
               severity="secondary"
-              text
-              rounded
+              transparent
               aria-label="Notifications"
               @click="toggleNotifications"
             />
@@ -233,11 +230,12 @@ function formatNotificationDate(value) {
                       {{ unreadNotificationsCount }} unread message{{ unreadNotificationsCount === 1 ? '' : 's' }}
                     </div>
                   </div>
-                  <Button
+                  <form-button
                     type="button"
                     label="Mark all as read"
-                    size="small"
-                    text
+                    size="sm"
+                    severity="secondary"
+                    transparent
                     :disabled="unreadNotificationsCount === 0"
                     :loading="markingAllRead"
                     class="shrink-0"
@@ -259,11 +257,13 @@ function formatNotificationDate(value) {
               </div>
 
               <div v-else class="max-h-100 overflow-y-auto p-2">
-                <button
+                <form-button
                   v-for="notification in notifications"
                   :key="notification.id"
                   type="button"
                   class="flex w-full gap-3 rounded-md px-3 py-3 text-left transition hover:bg-slate-50"
+                  severity="secondary"
+                  transparent
                   @click="openNotification(notification)"
                 >
                   <span
@@ -279,15 +279,16 @@ function formatNotificationDate(value) {
                       {{ notification.message }}
                     </span>
                   </span>
-                </button>
+                </form-button>
               </div>
             </div>
           </Popover>
           
-          <Button
+          <form-button
             type="button"
-            text
             class="gap-3 rounded-lg px-2 py-2 text-slate-700"
+            severity="secondary"
+            transparent
             aria-haspopup="true"
             aria-controls="user-menu"
             @click="toggleUserMenu"
@@ -297,20 +298,20 @@ function formatNotificationDate(value) {
               {{ userEmail }}
             </span>
             <i class="pi pi-chevron-down text-xs text-slate-400" />
-          </Button>
+          </form-button>
           <Menu id="user-menu" ref="userMenu" :model="menuItems" popup />
         </div>
       </div>
 
       <div class="px-5 py-6 lg:px-8">
-        <Button
+        <form-button
           v-if="showBackButton"
           type="button"
           icon="pi pi-arrow-left"
           label="Back"
           severity="secondary"
-          size="small"
-          text
+          size="sm"
+          transparent
           class="mb-5"
           @click="goBack"
         />
@@ -352,12 +353,12 @@ function formatNotificationDate(value) {
 
       <div class="mt-4 flex items-center justify-between gap-3 text-xs text-slate-500">
         <span>{{ formatNotificationDate(selectedNotification?.created_at) }}</span>
-        <Button
+        <form-button
           type="button"
           label="Close"
-          size="small"
+          size="sm"
           severity="secondary"
-          text
+          transparent
           @click="isNotificationModalOpen = false"
         />
       </div>

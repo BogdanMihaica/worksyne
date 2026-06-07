@@ -23,8 +23,9 @@ class UserWorkstreamController extends ApiResourceController
                     'unique_code',
                     'reference_code',
                     AllowedFilter::exact('units'),
+                    AllowedFilter::exact('logged_on'),
                 )
-                ->allowedSorts('unique_code', 'reference_code', 'units', 'created_at')
+                ->allowedSorts('unique_code', 'reference_code', 'units', 'logged_on', 'created_at')
                 ->paginate()
                 ->appends(request()->query())
         );
@@ -37,6 +38,7 @@ class UserWorkstreamController extends ApiResourceController
             'workstream_id' => ['required', 'integer', 'exists:workstream,id'],
             'unique_code' => ['nullable', 'string', 'max:255', 'unique:user_workstream,unique_code'],
             'units' => ['sometimes', 'required', 'integer', 'min:1', 'max:65535'],
+            'logged_on' => ['required', 'date', 'before_or_equal:today'],
             'reference_code' => ['nullable', 'string', 'max:255'],
             'note' => ['nullable', 'string'],
         ];
@@ -49,6 +51,7 @@ class UserWorkstreamController extends ApiResourceController
             'workstream_id' => ['sometimes', 'required', 'integer', 'exists:workstream,id'],
             'unique_code' => ['sometimes', 'nullable', 'string', 'max:255', Rule::unique('user_workstream', 'unique_code')->ignore($model->getKey())],
             'units' => ['sometimes', 'required', 'integer', 'min:1', 'max:65535'],
+            'logged_on' => ['sometimes', 'required', 'date', 'before_or_equal:today'],
             'reference_code' => ['sometimes', 'nullable', 'string', 'max:255'],
             'note' => ['sometimes', 'nullable', 'string'],
         ];

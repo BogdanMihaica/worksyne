@@ -205,29 +205,26 @@ function escapeHtml(value) {
       </div>
 
       <div class="flex items-center gap-2">
-        <button
+        <form-button
           type="button"
-          class="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-900"
+          icon="pi pi-angle-left"
+          severity="secondary"
           aria-label="Previous"
           @click="previous"
-        >
-          <i class="pi pi-angle-left" />
-        </button>
-        <button
+        />
+        <form-button
           type="button"
-          class="h-9 rounded-lg border border-slate-200 px-4 text-sm font-medium text-slate-700 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-900"
+          label="Today"
+          severity="secondary"
           @click="today"
-        >
-          Today
-        </button>
-        <button
+        />
+        <form-button
           type="button"
-          class="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-900"
+          icon="pi pi-angle-right"
+          severity="secondary"
           aria-label="Next"
           @click="next"
-        >
-          <i class="pi pi-angle-right" />
-        </button>
+        />
       </div>
     </div>
 

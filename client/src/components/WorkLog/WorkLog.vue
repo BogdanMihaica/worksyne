@@ -18,6 +18,7 @@ const editingWorkLog = ref(null)
 
 const workstreamId = ref('')
 const units = ref(1)
+const loggedOn = ref('')
 const referenceCode = ref('')
 const note = ref('')
 
@@ -40,7 +41,8 @@ const columns = [
     header: 'Note',
     format: value => value || '-',
   },
-  { field: 'created_at', header: 'Created at', sortable: true, date: true },
+  { field: 'logged_on', header: 'Work day', sortable: true, date: true },
+  { field: 'created_at', header: 'Created at', date: true },
   {
     field: 'actions',
     header: 'Actions',
@@ -96,6 +98,7 @@ function resetForm() {
   editingWorkLog.value = null
   workstreamId.value = ''
   units.value = 1
+  loggedOn.value = new Date().toLocaleDateString('en-CA')
   referenceCode.value = ''
   note.value = ''
   errors.value = {}
@@ -105,6 +108,7 @@ function startEdit(workLog) {
   editingWorkLog.value = workLog
   workstreamId.value = workLog.workstream_id || ''
   units.value = workLog.units ?? 1
+  loggedOn.value = String(workLog.logged_on || '').split('T')[0]
   referenceCode.value = workLog.reference_code || ''
   note.value = workLog.note || ''
   errors.value = {}
@@ -117,6 +121,7 @@ async function submit() {
   const payload = {
     workstream_id: workstreamId.value,
     units: units.value,
+    logged_on: loggedOn.value,
     reference_code: referenceCode.value,
     note: note.value,
   }
@@ -177,6 +182,14 @@ function cancelEdit() {
             :error="errors.units"
           />
 
+          <form-date
+            v-model="loggedOn"
+            label="Work day"
+            required
+            size="lg"
+            :error="errors.logged_on"
+          />
+
           <form-input
             v-model="referenceCode"
             label="Reference code"
@@ -221,7 +234,7 @@ function cancelEdit() {
           :key="gridKey"
           :columns="columns"
           url="/api/work-log"
-          default-sort-field="created_at"
+          default-sort-field="logged_on"
           default-sort-order="desc"
           :filters="logsFilters"
         />

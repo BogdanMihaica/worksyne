@@ -1,5 +1,4 @@
 <script setup>
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
 import Password from 'primevue/password'
@@ -54,6 +53,7 @@ async function submit() {
 <template>
   <div class="auth-backdrop relative min-h-screen overflow-hidden text-slate-950">
     <div class="auth-sheen absolute inset-0" />
+    <auth-home-button />
 
     <div class="relative z-1 flex min-h-screen items-center justify-center px-5 py-10 sm:px-8">
       <div class="w-full max-w-117.5">
@@ -104,11 +104,11 @@ async function submit() {
                 />
               </div>
 
-              <Button
+              <form-button
                 type="submit"
                 label="Reset password"
                 icon="pi pi-lock"
-                class="w-full justify-center bg-brand-900! text-white!"
+                class="w-full"
                 :loading="resetting"
               />
             </form>

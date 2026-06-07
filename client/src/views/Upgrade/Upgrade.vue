@@ -1,5 +1,4 @@
 <script setup>
-import Button from 'primevue/button'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { authStore } from '../../stores/auth'
@@ -176,17 +175,17 @@ function planFeatures(plan) {
               </div>
             </div>
 
-            <Button
+            <form-button
               v-if="Number(plan.price) > 0"
               type="button"
               icon="pi pi-crown"
               :label="currentPlanName === plan.name ? 'Current plan' : `Buy ${plan.name}`"
               :disabled="currentPlanName === plan.name"
               :loading="checkoutPlanId === plan.id"
-              class="w-full bg-brand-900! text-white!"
+              class="w-full"
               @click="startCheckout(plan)"
             />
-            <Button
+            <form-button
               v-else
               type="button"
               icon="pi pi-arrow-down"
@@ -194,7 +193,6 @@ function planFeatures(plan) {
               :disabled="currentPlanName === plan.name"
               :loading="downgrading"
               severity="secondary"
-              outlined
               class="w-full"
               @click="showDowngradeConfirmation = true"
             />

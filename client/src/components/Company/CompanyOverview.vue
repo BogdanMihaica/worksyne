@@ -1,5 +1,4 @@
 <script setup>
-import Button from 'primevue/button'
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useHttp } from '../../plugins/http'

@@ -32,7 +32,7 @@ class DashboardController extends Controller
     private function totalWorkedItemsToday(int $userId, string $role, ?int $companyId): int
     {
         $query = UserWorkstream::query()
-            ->whereDate('user_workstream.created_at', today());
+            ->whereDate('user_workstream.logged_on', today());
 
         if ($role === 'company_admin' && $companyId) {
             $query->whereHas('workstream', function ($query) use ($companyId) {

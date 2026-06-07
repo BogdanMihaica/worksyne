@@ -8,6 +8,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   severity: {
     type: String,
     default: 'primary',
@@ -23,7 +27,11 @@ const props = defineProps({
   iconColor: {
     type: String,
     default: 'inherit'
-  }
+  },
+  iconPosition: {
+    type: String,
+    default: 'left',
+  },
 })
 
 const sizeClass = computed(() => {
@@ -49,23 +57,51 @@ const severityClass = computed(() => {
 
   return severityMap[props.severity] || severityMap.primary
 })
+
+const isPrimeIcon = computed(() => props.icon?.startsWith('pi '))
 </script>
 
 <template>
   <button
-    :disabled="loading"
+    :disabled="loading || disabled"
     :class="[
       'cursor-pointer text-center flex items-center justify-center rounded-sm font-medium transition-all',
       transparent ? 'opacity-60 hover:opacity-100' : '',
       sizeClass,
       severityClass,
-      loading ? 'opacity-60 pointer-events-none' : '',
+      loading || disabled ? 'opacity-60 pointer-events-none' : '',
     ]"
   >
-    <app-icon v-if="icon && !loading" :icon="icon" :class="label ? 'mr-2' : ''" :color="iconColor"/>
+    <slot v-if="$slots.default" />
 
-    <app-icon v-if="loading" class="animate-spin" icon="spinner" :class="label ? 'mr-2' : ''" />
+    <template v-else>
+      <i
+        v-if="icon && !loading && isPrimeIcon && iconPosition === 'left'"
+        :class="[icon, label ? 'mr-2' : '']"
+        :style="{ color: iconColor }"
+      />
+      <app-icon
+        v-else-if="icon && !loading && iconPosition === 'left'"
+        :icon="icon"
+        :class="label ? 'mr-2' : ''"
+        :color="iconColor"
+      />
 
-    <span>{{ label }}</span>
+      <app-icon v-if="loading" class="animate-spin" icon="spinner" :class="label ? 'mr-2' : ''" />
+
+      <span>{{ label }}</span>
+
+      <i
+        v-if="icon && !loading && isPrimeIcon && iconPosition === 'right'"
+        :class="[icon, label ? 'ml-2' : '']"
+        :style="{ color: iconColor }"
+      />
+      <app-icon
+        v-else-if="icon && !loading && iconPosition === 'right'"
+        :icon="icon"
+        :class="label ? 'ml-2' : ''"
+        :color="iconColor"
+      />
+    </template>
   </button>
 </template>

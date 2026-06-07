@@ -140,15 +140,14 @@ function gapClass(value) {
       </template>
 
       <template #actions>
-        <button
+        <form-button
           type="button"
-          class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+          label="Refresh"
+          icon="pi pi-refresh"
+          severity="secondary"
           :disabled="loading"
           @click="loadForecast"
-        >
-          <i class="pi pi-refresh text-sm" :class="{ 'pi-spin': loading }" />
-          Refresh
-        </button>
+        />
       </template>
 
       <template #content>

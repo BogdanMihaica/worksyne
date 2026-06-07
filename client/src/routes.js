@@ -1,9 +1,11 @@
 import Landing from './views/Landing/Landing.vue'
+import About from './views/About/About.vue'
 import Contact from './views/Contact/Contact.vue'
 import ForgotPassword from './views/ForgotPassword/ForgotPassword.vue'
 import Pricing from './views/Pricing/Pricing.vue'
 import ResetPassword from './views/ResetPassword/ResetPassword.vue'
 import SignIn from './views/SignIn/SignIn.vue'
+import PublicLayout from './layouts/PublicLayout.vue'
 import SignedInLayout from './layouts/SignedInLayout.vue'
 import Dashboard from './views/Dashboard/Dashboard.vue'
 import Users from './views/Users/Users.vue'
@@ -35,24 +37,35 @@ import Upgrade from './views/Upgrade/Upgrade.vue'
 export const routes = [
   {
     path: '/',
-    name: 'landing',
-    component: Landing,
-    meta: {
-      guestOnly: true,
-    },
-  },
-  {
-    path: '/pricing',
-    name: 'pricing',
-    component: Pricing,
-    meta: {
-      guestOnly: true,
-    },
-  },
-  {
-    path: '/contact',
-    name: 'contact',
-    component: Contact,
+    component: PublicLayout,
+    children: [
+      {
+        path: '',
+        name: 'landing',
+        component: Landing,
+        meta: {
+          guestOnly: true,
+        },
+      },
+      {
+        path: 'about',
+        name: 'about',
+        component: About,
+      },
+      {
+        path: 'pricing',
+        name: 'pricing',
+        component: Pricing,
+        meta: {
+          guestOnly: true,
+        },
+      },
+      {
+        path: 'contact',
+        name: 'contact',
+        component: Contact,
+      },
+    ],
   },
   {
     path: '/dashboard',

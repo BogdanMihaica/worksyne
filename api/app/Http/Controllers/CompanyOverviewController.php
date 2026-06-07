@@ -41,7 +41,7 @@ class CompanyOverviewController extends Controller
             ->join('user', 'user.id', '=', 'user_workstream.user_id')
             ->join('workstream', 'workstream.id', '=', 'user_workstream.workstream_id')
             ->where('workstream.company_id', $companyId)
-            ->whereBetween('user_workstream.created_at', [now()->startOfWeek(), now()->endOfWeek()])
+            ->whereBetween('user_workstream.logged_on', [now()->startOfWeek()->toDateString(), now()->endOfWeek()->toDateString()])
             ->groupBy('user.id', 'user.name', 'user.email')
             ->orderByDesc('workstream_count')
             ->orderByDesc('units')

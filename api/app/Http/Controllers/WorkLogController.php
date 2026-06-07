@@ -38,7 +38,7 @@ class WorkLogController extends Controller
                 'note',
                 AllowedFilter::exact('units'),
             )
-            ->allowedSorts('created_at', 'units', 'reference_code', 'workstream_id')
+            ->allowedSorts('logged_on', 'created_at', 'units', 'reference_code', 'workstream_id')
             ->paginate()
             ->appends(request()->query());
 
@@ -72,16 +72,16 @@ class WorkLogController extends Controller
                     });
                 }),
                 AllowedFilter::callback('start_date', function ($query, $value) {
-                    $query->whereDate('user_workstream.created_at', '>=', $value);
+                    $query->whereDate('user_workstream.logged_on', '>=', $value);
                 }),
                 AllowedFilter::callback('end_date', function ($query, $value) {
-                    $query->whereDate('user_workstream.created_at', '<=', $value);
+                    $query->whereDate('user_workstream.logged_on', '<=', $value);
                 }),
                 'reference_code',
                 'note',
                 AllowedFilter::exact('units'),
             )
-            ->allowedSorts('created_at', 'updated_at', 'units', 'reference_code', 'workstream_id', 'user_id')
+            ->allowedSorts('logged_on', 'created_at', 'updated_at', 'units', 'reference_code', 'workstream_id', 'user_id')
             ->paginate()
             ->appends(request()->query());
 
@@ -146,11 +146,11 @@ class WorkLogController extends Controller
                     ->where('workstream.company_id', $companyId);
 
                 if (! empty($filters['start_date'])) {
-                    $subQuery->whereDate('user_workstream.created_at', '>=', $filters['start_date']);
+                    $subQuery->whereDate('user_workstream.logged_on', '>=', $filters['start_date']);
                 }
 
                 if (! empty($filters['end_date'])) {
-                    $subQuery->whereDate('user_workstream.created_at', '<=', $filters['end_date']);
+                    $subQuery->whereDate('user_workstream.logged_on', '<=', $filters['end_date']);
                 }
 
                 if (! empty($filters['workstream_id'])) {
@@ -251,6 +251,7 @@ class WorkLogController extends Controller
             ],
             'unique_code' => ['nullable', 'string', 'max:255', 'unique:user_workstream,unique_code'],
             'units' => ['required', 'integer', 'min:1', 'max:65535'],
+            'logged_on' => ['required', 'date', 'before_or_equal:today'],
             'reference_code' => ['nullable', 'string', 'max:255'],
             'note' => ['nullable', 'string'],
         ]);
@@ -299,6 +300,7 @@ class WorkLogController extends Controller
                 Rule::unique('user_workstream', 'unique_code')->ignore($workLog->getKey()),
             ],
             'units' => ['sometimes', 'required', 'integer', 'min:1', 'max:65535'],
+            'logged_on' => ['sometimes', 'required', 'date', 'before_or_equal:today'],
             'reference_code' => ['sometimes', 'nullable', 'string', 'max:255'],
             'note' => ['sometimes', 'nullable', 'string'],
         ]);
@@ -345,11 +347,11 @@ class WorkLogController extends Controller
         }
 
         if (! empty($filters['start_date'])) {
-            $query->whereDate('user_workstream.created_at', '>=', $filters['start_date']);
+            $query->whereDate('user_workstream.logged_on', '>=', $filters['start_date']);
         }
 
         if (! empty($filters['end_date'])) {
-            $query->whereDate('user_workstream.created_at', '<=', $filters['end_date']);
+            $query->whereDate('user_workstream.logged_on', '<=', $filters['end_date']);
         }
 
         if (! empty($filters['reference_code'])) {

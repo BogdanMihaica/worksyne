@@ -248,6 +248,7 @@ class SeedTestCompany extends Seeder
                     'workstream_id' => $assignment['workstream']->id,
                     'unique_code' => 'acme-'.$day->format('Ymd').'-'.$entryNumber,
                     'units' => mt_rand(1, 12),
+                    'logged_on' => $day->toDateString(),
                     'reference_code' => 'ACME-'.$day->format('Ymd').'-'.$entryNumber,
                     'note' => null,
                     'created_at' => $createdAt,
