@@ -9,6 +9,7 @@ import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Password from 'primevue/password'
+import { RouterLink } from 'vue-router'
 import { authStore } from '../../stores/auth'
 
 const email = ref('')
@@ -17,6 +18,11 @@ const remember = ref(false)
 const route = useRoute()
 const router = useRouter()
 const errorMessage = ref('')
+const passwordResetMessage = computed(() => (
+  route.query.password_reset === 'success'
+    ? 'Your password has been reset. Sign in with your new password.'
+    : ''
+))
 const isLoading = computed(() => authStore.state.isLoading)
 
 async function onSignIn() {
@@ -70,6 +76,9 @@ async function onSignIn() {
                 <Message v-if="errorMessage" severity="error" size="small">
                   {{ errorMessage }}
                 </Message>
+                <Message v-if="passwordResetMessage" severity="success" size="small">
+                  {{ passwordResetMessage }}
+                </Message>
 
                 <div class="space-y-2">
                   <label for="email" class="text-sm font-medium text-slate-700">Email address</label>
@@ -108,7 +117,9 @@ async function onSignIn() {
                     <span>Remember me</span>
                   </label>
 
-                  <Button label="Forgot password?" link type="button" class="px-0 text-sm text-brand-700!" />
+                  <RouterLink :to="{ name: 'forgot-password' }" class="text-sm font-medium text-brand-700">
+                    Forgot password?
+                  </RouterLink>
                 </div>
 
                 <Button

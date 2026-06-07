@@ -138,7 +138,6 @@ const routeGroups = [
         label: 'Work Logs',
         icon: 'pi pi-list-check',
         roles: ['company_admin'],
-        feature: 'time-logging',
       },
       {
         name: 'timesheet',
@@ -152,7 +151,6 @@ const routeGroups = [
         label: 'Log Work',
         icon: 'pi pi-clipboard',
         roles: ['company_admin', 'worker'],
-        feature: 'time-logging',
       },
     ],
   },

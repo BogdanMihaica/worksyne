@@ -14,6 +14,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\SubscriptionController;
@@ -36,6 +37,8 @@ Route::get('pricing', [PricingController::class, 'index']);
 Route::post('contact', ContactController::class)->middleware('throttle:5,1');
 
 Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+Route::post('auth/forgot-password', [PasswordResetController::class, 'requestLink'])->middleware('throttle:5,1');
+Route::post('auth/reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:10,1');
 Route::middleware('auth.token')->group(function () {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
@@ -59,14 +62,15 @@ Route::middleware('auth.token')->group(function () {
         Route::get('company-timesheet', [TimeoffRequestController::class, 'companyTimesheet'])->middleware('feature:company-timeoff');
         Route::get('company-timeoff-requests', [TimeoffRequestController::class, 'companyIndex'])->middleware('feature:company-timeoff');
         Route::patch('company-timeoff-requests/{timeoffRequest}/status', [TimeoffRequestController::class, 'companyUpdateStatus'])->middleware('feature:company-timeoff');
-        Route::get('company-work-logs', [WorkLogController::class, 'companyIndex'])->middleware('feature:time-logging');
-        Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions'])->middleware('feature:time-logging');
-        Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary'])->middleware('feature:time-logging');
+        Route::get('company-work-logs', [WorkLogController::class, 'companyIndex']);
+        Route::get('company-work-logs/options', [WorkLogController::class, 'companyOptions']);
+        Route::get('company-work-logs/summary', [WorkLogController::class, 'companySummary']);
         Route::get('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'forWorkstream'])->middleware('feature:capacity-models');
         Route::put('workstreams/{workstream}/capacity-models', [CapacityModelController::class, 'updateForWorkstream'])->middleware('feature:capacity-models');
     });
 
     Route::middleware('role:company_admin,worker')->group(function () {
+        Route::get('timesheet/worked-times', [TimeoffRequestController::class, 'workedTimes'])->middleware('feature:time-logging');
         Route::get('timelog/status', [TimelogController::class, 'status'])->middleware('feature:time-logging');
         Route::post('timelog/start', [TimelogController::class, 'start'])->middleware('feature:time-logging');
         Route::patch('timelog/stop', [TimelogController::class, 'stop'])->middleware('feature:time-logging');
@@ -74,6 +78,7 @@ Route::middleware('auth.token')->group(function () {
         Route::patch('timelog/resume', [TimelogController::class, 'resume'])->middleware('feature:time-logging');
     });
 
+    Route::get('companies/{company}/owner-options', [CompanyController::class, 'ownerOptions']);
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('company-users', CompanyUserController::class);
     Route::put('company-users/{user}/seniorities', [CompanyUserSeniorityController::class, 'updateForUser'])
@@ -85,10 +90,10 @@ Route::middleware('auth.token')->group(function () {
     Route::apiResource('subscription-plans', SubscriptionPlanController::class);
     Route::apiResource('subscription-plan-features', SubscriptionPlanFeatureController::class);
     Route::apiResource('timeoff-requests', TimeoffRequestController::class)->middleware('feature:company-timeoff');
-    Route::get('work-log/workstreams', [WorkLogController::class, 'workstreams'])->middleware('feature:time-logging');
-    Route::get('work-log', [WorkLogController::class, 'index'])->middleware('feature:time-logging');
-    Route::post('work-log', [WorkLogController::class, 'store'])->middleware('feature:time-logging');
-    Route::put('work-log/{id}', [WorkLogController::class, 'update'])->middleware('feature:time-logging');
+    Route::get('work-log/workstreams', [WorkLogController::class, 'workstreams']);
+    Route::get('work-log', [WorkLogController::class, 'index']);
+    Route::post('work-log', [WorkLogController::class, 'store']);
+    Route::put('work-log/{id}', [WorkLogController::class, 'update']);
     Route::get('users/without-company', [UserController::class, 'withoutCompany']);
     Route::apiResource('users', UserController::class);
     Route::apiResource('user-workstreams', UserWorkstreamController::class);

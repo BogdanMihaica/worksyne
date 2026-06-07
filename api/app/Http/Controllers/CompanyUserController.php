@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CompanyUser;
+use App\Models\Timelog;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -17,8 +18,23 @@ class CompanyUserController extends ApiResourceController
 
     public function index(): JsonResponse
     {
-        return response()->json(
-            QueryBuilder::for(CompanyUser::query()->with(['company', 'user']))
+        $user = request()->user();
+        $companyId = $user?->companyUser?->company_id;
+        $company = $user?->companyUser?->company;
+
+        if (! $user?->is_admin && ! $companyId) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        $canViewWorkStatus = $company?->subscriptionPlan
+            ? $company->subscriptionPlan->features()->where('key', 'time-logging')->exists()
+            : false;
+
+        $companyUsers = QueryBuilder::for(
+            CompanyUser::query()
+                ->with(['company', 'user'])
+                ->when(! $user?->is_admin, fn ($query) => $query->where('company_id', $companyId))
+        )
                 ->allowedFilters(
                     AllowedFilter::callback('name', function ($query, $value) {
                         $query->whereHas('user', function ($query) use ($value) {
@@ -42,8 +58,35 @@ class CompanyUserController extends ApiResourceController
                 )
                 ->allowedSorts('external_id', 'role', 'status', 'created_at')
                 ->paginate()
-                ->appends(request()->query())
-        );
+                ->appends(request()->query());
+
+        if ($canViewWorkStatus) {
+            $userIds = $companyUsers->getCollection()
+                ->pluck('user.id')
+                ->filter()
+                ->values();
+
+            $activeTimelogs = Timelog::query()
+                ->with(['breaks' => fn ($query) => $query->whereNull('end_time')])
+                ->whereIn('user_id', $userIds)
+                ->whereNull('end_time')
+                ->latest('start_time')
+                ->get()
+                ->unique('user_id')
+                ->keyBy('user_id');
+
+            $companyUsers->getCollection()->each(function (CompanyUser $companyUser) use ($activeTimelogs) {
+                $activeTimelog = $activeTimelogs->get($companyUser->user?->id);
+
+                $companyUser->setAttribute('work_status', match (true) {
+                    ! $activeTimelog => 'offline',
+                    $activeTimelog->breaks->isNotEmpty() => 'in a break',
+                    default => 'working',
+                });
+            });
+        }
+
+        return response()->json($companyUsers);
     }
 
     public function show(int $id): JsonResponse

@@ -148,6 +148,7 @@ function seniorityLabel(value) {
               min="0"
               step="0.01"
               size="sm"
+              description="Expected output for one hour of work at this seniority."
               :error="errors[`items.${index}.units_per_hour`]"
             />
           </div>

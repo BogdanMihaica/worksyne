@@ -41,7 +41,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('subscription_plan_id')->nullable();
-            $table->foreignId('owner_id');
+            $table->foreignId('owner_id')->nullable();
 
             $table->string('name')->unique();
 

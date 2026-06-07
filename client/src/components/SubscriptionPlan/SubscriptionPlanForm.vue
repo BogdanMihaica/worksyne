@@ -96,6 +96,7 @@ function cancel() {
           type="number"
           required
           size="lg"
+          description="Monthly price per company in USD. Use 0 for a free plan."
           :error="errors.price"
         />
 

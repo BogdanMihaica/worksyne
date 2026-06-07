@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import Checkbox from 'primevue/checkbox'
 import { useHttp } from '../../plugins/http'
 import { useAppToast } from '../../plugins/toast'
 import { authStore } from '../../stores/auth'
@@ -8,11 +9,14 @@ const http = useHttp()
 const toast = useAppToast()
 const isTimeoffModalOpen = ref(false)
 const timeoffRequests = ref([])
+const workedTimes = ref([])
 const companyUsers = ref([])
 const visibleRange = ref(defaultRange())
 const actionTooltip = ref(null)
 const actionTooltipRef = ref(null)
 const selectedTimeoffRequest = ref(null)
+const showTimeoffs = ref(true)
+const showTimelogs = ref(true)
 
 const isCompanyAdmin = computed(() => authStore.userRole.value === 'company_admin')
 const canRequestTimeoff = computed(() => {
@@ -53,7 +57,7 @@ const events = computed(() => {
   }
 
   return [
-    ...timeoffRequests.value
+    ...(showTimeoffs.value ? timeoffRequests.value : [])
       .filter((request) => request.status !== 'rejected')
       .map((request) => ({
         id: `timeoff-${request.id}`,
@@ -64,6 +68,19 @@ const events = computed(() => {
         end: `${addDays(request.end_date, 1)}T00:00:00`,
         text: `${request.reason || 'Timeoff request'} (Timeoff)`,
         ...eventColors(request.status),
+      })),
+    ...(showTimelogs.value ? workedTimes.value : [])
+      .filter((workedTime) => Number(workedTime.seconds) > 0)
+      .map((workedTime) => ({
+      id: `worked-time-${workedTime.user_id}-${workedTime.date}`,
+      resource: workedTime.user_id,
+      start: `${workedTime.date}T00:00:00`,
+      end: `${addDays(workedTime.date, 1)}T00:00:00`,
+      text: `${workedTime.user_name} Worked Time (${formatDuration(workedTime.seconds)})`,
+      cssClass: 'worksyne-scheduler-event-worked-time',
+      backColor: '#dbeafe',
+      borderColor: '#3b82f6',
+      fontColor: '#1e40af',
       })),
   ]
 })
@@ -89,6 +106,7 @@ async function loadTimeoffRequests() {
   if (!user) {
     companyUsers.value = []
     timeoffRequests.value = []
+    workedTimes.value = []
     return
   }
 
@@ -97,18 +115,27 @@ async function loadTimeoffRequests() {
     return
   }
 
-  const { data } = await http.get('/api/timeoff-requests', {
-    params: {
-      filter: {
-        user_id: user.id,
+  const [timeoffResponse, workedTimeResponse] = await Promise.all([
+    http.get('/api/timeoff-requests', {
+      params: {
+        filter: {
+          user_id: user.id,
+          range_start: visibleRange.value.start,
+          range_end: visibleRange.value.end,
+        },
+        sort: 'start_date',
+      },
+    }),
+    http.get('/api/timesheet/worked-times', {
+      params: {
         range_start: visibleRange.value.start,
         range_end: visibleRange.value.end,
       },
-      sort: 'start_date',
-    },
-  })
+    }),
+  ])
 
-  timeoffRequests.value = data.data
+  timeoffRequests.value = timeoffResponse.data.data
+  workedTimes.value = workedTimeResponse.data.worked_times || []
 }
 
 async function loadCompanyTimesheet() {
@@ -121,6 +148,7 @@ async function loadCompanyTimesheet() {
 
   companyUsers.value = data.users || []
   timeoffRequests.value = data.timeoff_requests || []
+  workedTimes.value = data.worked_times || []
 }
 
 function onRangeChange(range) {
@@ -264,6 +292,17 @@ function intValue(value) {
   return Number.parseInt(value, 10)
 }
 
+function formatDuration(value) {
+  const seconds = Math.max(0, Number(value || 0))
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = seconds % 60
+
+  return [hours, minutes, remainingSeconds]
+    .map((part) => String(part).padStart(2, '0'))
+    .join(':')
+}
+
 function eventColors(status) {
   if (status === 'approved') {
     return {
@@ -292,18 +331,33 @@ function eventColors(status) {
     @event-click="onEventClick"
   >
     <template #actions>
-      <form-button
-        v-if="canRequestTimeoff"
-        icon="plus"
-        label="Request Timeoff"
-        @click="openCreateTimeoff"
-      />
-      <form-button
-        v-if="isCompanyAdmin"
-        icon="plus"
-        label="Add Timeoff"
-        @click="openCreateTimeoff"
-      />
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700">
+            <Checkbox v-model="showTimeoffs" binary />
+            <span>Timeoffs</span>
+          </label>
+          <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700">
+            <Checkbox v-model="showTimelogs" binary />
+            <span>Timelogs</span>
+          </label>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <form-button
+            v-if="canRequestTimeoff"
+            icon="plus"
+            label="Request Timeoff"
+            @click="openCreateTimeoff"
+          />
+          <form-button
+            v-if="isCompanyAdmin"
+            icon="plus"
+            label="Add Timeoff"
+            @click="openCreateTimeoff"
+          />
+        </div>
+      </div>
     </template>
   </app-scheduler>
 

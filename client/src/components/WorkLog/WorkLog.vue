@@ -173,6 +173,7 @@ function cancelEdit() {
             type="number"
             required
             size="lg"
+            description="Number of completed units to record for this workstream."
             :error="errors.units"
           />
 
@@ -180,6 +181,7 @@ function cancelEdit() {
             v-model="referenceCode"
             label="Reference code"
             size="lg"
+            description="Optional ticket, case, order, or task identifier."
             :error="errors.reference_code"
           />
 

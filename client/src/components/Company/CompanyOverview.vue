@@ -43,7 +43,7 @@ function formatDate(value) {
           </div>
           <div class="rounded-md border border-slate-200 bg-white p-4">
             <div class="text-sm text-slate-500">Owner</div>
-            <div class="mt-2 text-sm font-semibold text-slate-950">{{ overview.company.owner.email }}</div>
+            <div class="mt-2 text-sm font-semibold text-slate-950">{{ overview.company.owner?.email || '-' }}</div>
           </div>
           <div class="rounded-md border border-slate-200 bg-white p-4">
             <div class="text-sm text-slate-500">Users</div>

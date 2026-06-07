@@ -22,6 +22,7 @@ const saving = ref(false)
 
 const isEditMode = computed(() => Boolean(route.params.id))
 const companyId = computed(() => authStore.state.user?.company_user?.company_id)
+const canUseCapacityModels = computed(() => authStore.hasFeature('capacity-models'))
 const title = computed(() => isEditMode.value ? 'Edit Workstream' : 'Create Workstream')
 
 onMounted(async () => {
@@ -44,7 +45,7 @@ async function loadWorkstream() {
 }
 
 async function loadCapacityModels() {
-  if (!isEditMode.value) {
+  if (!isEditMode.value || !canUseCapacityModels.value) {
     return
   }
 
@@ -63,18 +64,25 @@ async function submit() {
   const payload = {
     name: name.value,
     company_id: companyId.value,
-    capacity_models: capacityModels.value.map((item) => ({
+  }
+
+  if (canUseCapacityModels.value) {
+    payload.capacity_models = capacityModels.value.map((item) => ({
       seniority: item.seniority,
       units_per_hour: Number(item.units_per_hour || 0),
-    })),
+    }))
   }
 
   try {
     if (isEditMode.value) {
       await http.put(`/api/workstreams/${route.params.id}`, payload)
-      await http.put(`/api/workstreams/${route.params.id}/capacity-models`, {
-        items: payload.capacity_models,
-      })
+
+      if (canUseCapacityModels.value) {
+        await http.put(`/api/workstreams/${route.params.id}/capacity-models`, {
+          items: payload.capacity_models,
+        })
+      }
+
       toast({ type: 'success', message: 'Workstream updated successfully.' })
       router.push({ name: 'workstreams' })
     } else {
@@ -109,7 +117,7 @@ function seniorityLabel(value) {
     <template #content>
       <form class="flex flex-col gap-4" @submit.prevent="submit">
         <form-input v-model="name" label="Name" required size="lg" :error="errors.name" />
-        <div class="overflow-hidden border border-slate-200">
+        <div v-if="canUseCapacityModels" class="overflow-hidden border border-slate-200">
           <div class="grid grid-cols-[1fr_160px] bg-slate-50 px-3 py-2 text-xs font-semibold uppercase text-slate-500">
             <div>Seniority</div>
             <div>Units per hour</div>
@@ -129,11 +137,15 @@ function seniorityLabel(value) {
               min="0"
               step="0.01"
               size="sm"
+              description="Expected output for one hour of work at this seniority."
               :error="errors[`capacity_models.${index}.units_per_hour`] || errors[`items.${index}.units_per_hour`]"
             />
           </div>
         </div>
-        <form-error v-if="errors.capacity_models || errors.items" :error="errors.capacity_models || errors.items" />
+        <form-error
+          v-if="canUseCapacityModels && (errors.capacity_models || errors.items)"
+          :error="errors.capacity_models || errors.items"
+        />
         <div class="flex gap-2">
           <form-button type="submit" icon="save" label="Save" :loading="saving || loading" />
           <form-button severity="ternary" label="Cancel" @click.prevent="router.push({ name: 'workstreams' })" />

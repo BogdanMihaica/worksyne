@@ -35,7 +35,7 @@ class WorkstreamController extends ApiResourceController
         $attributes = $this->validatedAttributes($request, $this->storeRules());
 
         $workstream = DB::transaction(function () use ($attributes) {
-            $capacityModels = $attributes['capacity_models'];
+            $capacityModels = $attributes['capacity_models'] ?? [];
             unset($attributes['capacity_models']);
 
             $workstream = Workstream::query()->create($attributes);
@@ -57,6 +57,11 @@ class WorkstreamController extends ApiResourceController
 
     protected function storeRules(): array
     {
+        $company = request()->user()?->companyUser?->company;
+        $requiresCapacityModels = $company?->subscriptionPlan
+            ? $company->subscriptionPlan->features()->where('key', 'capacity-models')->exists()
+            : false;
+
         return [
             'company_id' => ['required', 'integer', 'exists:company,id'],
             'name' => [
@@ -65,7 +70,11 @@ class WorkstreamController extends ApiResourceController
                 'max:255',
                 Rule::unique('workstream', 'name')->where('company_id', request('company_id')),
             ],
-            'capacity_models' => ['required', 'array', 'size:'.count(CapacityModel::SENIORITIES)],
+            'capacity_models' => [
+                $requiresCapacityModels ? 'required' : 'sometimes',
+                'array',
+                'size:'.count(CapacityModel::SENIORITIES),
+            ],
             'capacity_models.*.seniority' => ['required', 'distinct', Rule::in(CapacityModel::SENIORITIES)],
             'capacity_models.*.units_per_hour' => ['required', 'numeric', 'min:0', 'max:999999.99'],
         ];

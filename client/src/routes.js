@@ -1,6 +1,8 @@
 import Landing from './views/Landing/Landing.vue'
 import Contact from './views/Contact/Contact.vue'
+import ForgotPassword from './views/ForgotPassword/ForgotPassword.vue'
 import Pricing from './views/Pricing/Pricing.vue'
+import ResetPassword from './views/ResetPassword/ResetPassword.vue'
 import SignIn from './views/SignIn/SignIn.vue'
 import SignedInLayout from './layouts/SignedInLayout.vue'
 import Dashboard from './views/Dashboard/Dashboard.vue'
@@ -277,7 +279,6 @@ export const routes = [
         meta: {
           requiresAuth: true,
           roles: ['company_admin'],
-          feature: 'company-timeoff',
         },
       },
       {
@@ -352,6 +353,22 @@ export const routes = [
     path: '/sign-in',
     name: 'sign-in',
     component: SignIn,
+    meta: {
+      guestOnly: true,
+    },
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPassword,
+    meta: {
+      guestOnly: true,
+    },
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPassword,
     meta: {
       guestOnly: true,
     },

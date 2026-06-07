@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\TimeoffRequest;
+use App\Models\Timelog;
 use App\Models\User;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -161,6 +164,33 @@ class TimeoffRequestController extends ApiResourceController
         return response()->json([
             'users' => $users,
             'timeoff_requests' => $timeoffRequests,
+            'worked_times' => $this->workedTimesForUsers($users, $attributes),
+        ]);
+    }
+
+    public function workedTimes(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $companyUser = $user?->companyUser;
+
+        if (! $companyUser?->company_id) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        $attributes = $request->validate([
+            'range_start' => ['required', 'date'],
+            'range_end' => ['required', 'date', 'after_or_equal:range_start'],
+        ]);
+
+        $users = $companyUser->role === 'company_admin'
+            ? User::query()
+                ->whereHas('companyUser', fn ($query) => $query->where('company_id', $companyUser->company_id))
+                ->orderBy('name')
+                ->get()
+            : collect([$user]);
+
+        return response()->json([
+            'worked_times' => $this->workedTimesForUsers($users, $attributes),
         ]);
     }
 
@@ -357,5 +387,80 @@ class TimeoffRequestController extends ApiResourceController
     private function dateOnly($value)
     {
         return $this->normalizedValue($value);
+    }
+
+    private function dailyWorkedTimes($users, $timelogs, CarbonImmutable $rangeStart, CarbonImmutable $rangeEnd): array
+    {
+        $now = CarbonImmutable::now();
+
+        return collect(CarbonPeriod::create($rangeStart->startOfDay(), $rangeEnd->startOfDay()))
+            ->flatMap(function ($date) use ($users, $timelogs, $now) {
+                $dayStart = CarbonImmutable::instance($date)->startOfDay();
+                $dayEnd = $dayStart->addDay();
+
+                return $users->map(function (User $user) use ($timelogs, $dayStart, $dayEnd, $now) {
+                    $seconds = collect($timelogs->get($user->id, []))
+                        ->sum(fn (Timelog $timelog) => $this->workedSecondsForDay($timelog, $dayStart, $dayEnd, $now));
+
+                    return [
+                        'user_id' => $user->id,
+                        'user_name' => $user->name,
+                        'date' => $dayStart->toDateString(),
+                        'seconds' => $seconds,
+                    ];
+                });
+            })
+            ->values()
+            ->all();
+    }
+
+    private function workedTimesForUsers($users, array $attributes): array
+    {
+        $rangeStart = CarbonImmutable::parse($attributes['range_start'])->startOfDay();
+        $rangeEnd = CarbonImmutable::parse($attributes['range_end'])->endOfDay();
+        $timelogs = Timelog::query()
+            ->with('breaks')
+            ->whereIn('user_id', $users->pluck('id'))
+            ->where('start_time', '<=', $rangeEnd)
+            ->where(function ($query) use ($rangeStart) {
+                $query
+                    ->whereNull('end_time')
+                    ->orWhere('end_time', '>=', $rangeStart);
+            })
+            ->get()
+            ->groupBy('user_id');
+
+        return $this->dailyWorkedTimes($users, $timelogs, $rangeStart, $rangeEnd);
+    }
+
+    private function workedSecondsForDay(
+        Timelog $timelog,
+        CarbonImmutable $dayStart,
+        CarbonImmutable $dayEnd,
+        CarbonImmutable $now,
+    ): int {
+        $sessionStart = max($timelog->start_time->getTimestamp(), $dayStart->getTimestamp());
+        $sessionEnd = min(
+            ($timelog->end_time ?? $now)->getTimestamp(),
+            $dayEnd->getTimestamp(),
+            $now->getTimestamp(),
+        );
+
+        if ($sessionEnd <= $sessionStart) {
+            return 0;
+        }
+
+        $breakSeconds = $timelog->breaks->sum(function ($break) use ($sessionStart, $sessionEnd, $now) {
+            $breakStart = max($break->start_time->getTimestamp(), $sessionStart);
+            $breakEnd = min(
+                ($break->end_time ?? $now)->getTimestamp(),
+                $sessionEnd,
+                $now->getTimestamp(),
+            );
+
+            return max(0, $breakEnd - $breakStart);
+        });
+
+        return max(0, $sessionEnd - $sessionStart - $breakSeconds);
     }
 }

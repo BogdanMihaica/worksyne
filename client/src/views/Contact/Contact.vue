@@ -87,6 +87,7 @@ async function submit() {
                 type="email"
                 size="lg"
                 required
+                description="We will send our response to this address."
                 :error="fieldError('email')"
               />
             </div>

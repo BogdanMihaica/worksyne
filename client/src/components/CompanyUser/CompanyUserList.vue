@@ -10,9 +10,17 @@ const externalId = ref('')
 const status = ref('')
 
 const companyId = computed(() => authStore.state.user?.company_user?.company_id)
+const canViewWorkStatus = computed(() => authStore.hasFeature('time-logging'))
 const filters = ref({})
-const columns = [
+const columns = computed(() => [
   { field: 'user.name', header: 'Name' },
+  ...(canViewWorkStatus.value
+    ? [{
+        field: 'work_status',
+        header: 'Work Status',
+        severity: ({ data }) => workStatusSeverity(data.work_status),
+      }]
+    : []),
   { field: 'user.email', header: 'Email' },
   { field: 'external_id', header: 'External ID', sortable: true },
   { field: 'role', header: 'Role', sortable: true },
@@ -34,7 +42,19 @@ const columns = [
         ]
       : [],
   },
-]
+])
+
+function workStatusSeverity(value) {
+  if (value === 'working') {
+    return 'success'
+  }
+
+  if (value === 'in a break') {
+    return 'warn'
+  }
+
+  return 'secondary'
+}
 
 function baseFilters() {
   return {

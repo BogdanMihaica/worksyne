@@ -17,7 +17,6 @@ const subscriptionPlanOptions = ref([])
 const errors = ref({})
 const loading = ref(false)
 const saving = ref(false)
-const currentOwner = ref(null)
 
 const isEditMode = computed(() => Boolean(route.params.id))
 const title = computed(() => isEditMode.value ? 'Edit Company' : 'Create Company')
@@ -36,7 +35,11 @@ onMounted(async () => {
 })
 
 async function loadOwners() {
-  const { data } = await http.get('/api/users/without-company')
+  if (!isEditMode.value) {
+    return
+  }
+
+  const { data } = await http.get(`/api/companies/${route.params.id}/owner-options`)
 
   ownerOptions.value = [
     { value: '', label: '-' },
@@ -45,13 +48,6 @@ async function loadOwners() {
       label: `${user.name} (${user.email})`,
     })),
   ]
-
-  if (currentOwner.value && !ownerOptions.value.some((option) => option.value === currentOwner.value.id)) {
-    ownerOptions.value.push({
-      value: currentOwner.value.id,
-      label: `${currentOwner.value.name} (${currentOwner.value.email})`,
-    })
-  }
 }
 
 async function loadSubscriptionPlans() {
@@ -78,12 +74,8 @@ async function loadCompany() {
   const { data } = await http.get(`/api/companies/${route.params.id}`)
 
   name.value = data.name
-  ownerId.value = data.owner_id
+  ownerId.value = data.owner_id || ''
   subscriptionPlanId.value = data.subscription_plan_id || ''
-
-  const response = await http.get(`/api/users/${data.owner_id}`)
-
-  currentOwner.value = response.data
 }
 
 async function submit() {
@@ -92,12 +84,13 @@ async function submit() {
 
   const payload = {
     name: name.value,
-    owner_id: ownerId.value,
     subscription_plan_id: subscriptionPlanId.value || null,
   }
 
   try {
     if (isEditMode.value) {
+      payload.owner_id = ownerId.value || null
+
       await http.put(`/api/companies/${route.params.id}`, payload)
       toast({ type: 'success', message: 'Company updated successfully.' })
       router.push({ name: 'companies' })
@@ -141,12 +134,13 @@ function cancel() {
         />
 
         <form-select
+          v-if="isEditMode"
           v-model="ownerId"
           label="Owner"
-          required
           size="lg"
           :options="ownerOptions"
           :default-option="false"
+          description="The owner is the primary user responsible for this company."
           :error="errors.owner_id"
         />
 
@@ -156,6 +150,7 @@ function cancel() {
           size="lg"
           :options="subscriptionPlanOptions"
           :default-option="false"
+          description="Determines which product features are available to the company."
           :error="errors.subscription_plan_id"
         />
 

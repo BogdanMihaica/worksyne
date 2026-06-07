@@ -231,7 +231,7 @@ function escapeHtml(value) {
       </div>
     </div>
 
-    <div v-if="$slots.actions" class="flex justify-end border-b border-slate-200 bg-white px-5 py-3">
+    <div v-if="$slots.actions" class="border-b border-slate-200 bg-white px-5 py-3">
       <slot name="actions" />
     </div>
 
@@ -304,6 +304,12 @@ function escapeHtml(value) {
   border-color: #f59e0b !important;
   background: #fef3c7 !important;
   color: #92400e !important;
+}
+
+:deep(.worksyne_scheduler_event.worksyne-scheduler-event-worked-time) {
+  border-color: #3b82f6 !important;
+  background: #dbeafe !important;
+  color: #1e40af !important;
 }
 
 :deep(.worksyne-scheduler-row) {

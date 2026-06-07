@@ -15,8 +15,19 @@ class OrderController extends ApiResourceController
 
     public function index(): JsonResponse
     {
+        $user = request()->user();
+        $companyId = $user?->companyUser?->company_id;
+
+        if (! $user?->is_admin && ! $companyId) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         return response()->json(
-            QueryBuilder::for(Order::query()->with(['user', 'company', 'subscriptionPlan']))
+            QueryBuilder::for(
+                Order::query()
+                    ->with(['user', 'company', 'subscriptionPlan'])
+                    ->when(! $user->is_admin, fn ($query) => $query->where('company_id', $companyId))
+            )
                 ->allowedFilters(
                     AllowedFilter::callback('company', function ($query, $value) {
                         $query->whereHas('company', function ($query) use ($value) {

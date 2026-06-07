@@ -18,7 +18,10 @@ const serverOffset = ref(0)
 let intervalId = null
 
 const companyRole = computed(() => authStore.state.user?.company_user?.role || '')
-const shouldShow = computed(() => ['company_admin', 'worker'].includes(companyRole.value))
+const shouldShow = computed(() => (
+  authStore.hasFeature('time-logging') &&
+  ['company_admin', 'worker'].includes(companyRole.value)
+))
 const isWorking = computed(() => Boolean(timelog.value?.id))
 const isOnBreak = computed(() => Boolean(activeBreak.value?.id))
 const elapsedSeconds = computed(() => {

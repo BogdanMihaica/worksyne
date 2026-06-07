@@ -205,6 +205,7 @@ function cancelSeniorities() {
             v-model="externalId"
             label="External ID"
             size="lg"
+            description="Optional identifier used to match this user with an external system."
             :error="errors['company_user.external_id']"
           />
           <form-input
@@ -213,6 +214,7 @@ function cancelSeniorities() {
             type="password"
             :required="!isEditMode"
             size="lg"
+            :description="isEditMode ? 'Leave blank to keep the current password.' : 'The user will use this password to sign in.'"
             :error="errors.password"
           />
           <form-select
@@ -222,6 +224,7 @@ function cancelSeniorities() {
             size="lg"
             :options="roleOptions"
             :default-option="false"
+            description="Company admins manage the company; workers use self-service workflows."
             :error="errors['company_user.role']"
           />
           <form-select
@@ -231,6 +234,7 @@ function cancelSeniorities() {
             size="lg"
             :options="statusOptions"
             :default-option="false"
+            description="Only approved users can access company workflows."
             :error="errors['company_user.status']"
           />
           <form-input
@@ -238,6 +242,7 @@ function cancelSeniorities() {
             label="Blocked"
             secondary-label="User is blocked"
             type="checkbox"
+            description="Blocked users cannot sign in."
             :error="errors.is_blocked"
           />
 
@@ -271,6 +276,7 @@ function cancelSeniorities() {
               size="lg"
               :options="seniorityOptions"
               :default-option="false"
+              description="Used when calculating this user's expected capacity."
               :error="seniorityErrors.items"
             />
           </div>

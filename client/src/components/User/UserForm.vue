@@ -162,6 +162,7 @@ function cancel() {
           type="password"
           :required="!isEditMode"
           size="lg"
+          :description="isEditMode ? 'Leave blank to keep the current password.' : 'The user will use this password to sign in.'"
           :error="errors.password"
         />
 
@@ -170,6 +171,7 @@ function cancel() {
           label="Admin"
           secondary-label="User has administrator access"
           type="checkbox"
+          description="Administrators can manage all companies, users, plans, and orders."
           :error="errors.is_admin"
         />
 
@@ -178,6 +180,7 @@ function cancel() {
           label="Blocked"
           secondary-label="User is blocked"
           type="checkbox"
+          description="Blocked users cannot sign in."
           :error="errors.is_blocked"
         />
 
@@ -187,6 +190,7 @@ function cancel() {
           size="lg"
           :options="roleOptions"
           :default-option="false"
+          description="Controls what the user can access inside their assigned company."
           :error="errors['company_user.role']"
         />
 
@@ -203,6 +207,7 @@ function cancel() {
           v-model="companyUserExternalId"
           label="Company external ID"
           size="lg"
+          description="Optional identifier used to match this user with an external system."
           :error="errors['company_user.external_id']"
         />
 
@@ -212,6 +217,7 @@ function cancel() {
           size="lg"
           :options="statusOptions"
           :default-option="false"
+          description="Only approved company users can use company workflows."
           :error="errors['company_user.status']"
         />
 

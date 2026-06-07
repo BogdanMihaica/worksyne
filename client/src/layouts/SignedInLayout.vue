@@ -30,6 +30,7 @@ const sidebarWidthClass = computed(() => (isSidebarCollapsed.value ? 'lg:w-20' :
 const contentOffsetClass = computed(() => (isSidebarCollapsed.value ? 'lg:pl-20' : 'lg:pl-68'))
 const showBackButton = computed(() => route.name !== 'dashboard')
 const canUseNotifications = computed(() => authStore.hasFeature('notifications'))
+const canUseTimeLogging = computed(() => authStore.hasFeature('time-logging'))
 const showUpgradeButton = computed(() => authStore.userRole.value === 'company_admin')
 
 const menuItems = [
@@ -192,7 +193,7 @@ function formatNotificationDate(value) {
       >
         <div class="text-lg font-medium">Admin Portal</div>
         <div class="flex flex-wrap items-center justify-end gap-3">
-          <work-timer />
+          <work-timer v-if="canUseTimeLogging" />
 
           <RouterLink v-if="showUpgradeButton" :to="{ name: 'upgrade' }">
             <form-button
