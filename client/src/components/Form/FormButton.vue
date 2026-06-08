@@ -66,7 +66,6 @@ const isPrimeIcon = computed(() => props.icon?.startsWith('pi '))
     :disabled="loading || disabled"
     :class="[
       'cursor-pointer text-center flex items-center justify-center rounded-sm font-medium transition-all',
-      transparent ? 'opacity-60 hover:opacity-100' : '',
       sizeClass,
       severityClass,
       loading || disabled ? 'opacity-60 pointer-events-none' : '',

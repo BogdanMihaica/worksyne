@@ -189,7 +189,7 @@ function formatNotificationDate(value) {
       <div
         class="sticky top-0 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-5 py-3 backdrop-blur lg:px-8"
       >
-        <div class="text-lg font-medium">Admin Portal</div>
+        <div class="text-lg font-medium">Workyne Portal</div>
         <div class="flex flex-wrap items-center justify-end gap-3">
           <work-timer v-if="canUseTimeLogging" />
 
