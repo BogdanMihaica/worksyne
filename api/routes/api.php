@@ -52,6 +52,7 @@ Route::middleware('auth.token')->group(function () {
     });
 
     Route::middleware('role:company_admin')->group(function () {
+        Route::get('company-timelogs', [TimelogController::class, 'companyIndex'])->middleware('feature:time-logging');
         Route::post('company-subscription/checkout', [CompanySubscriptionCheckoutController::class, 'store']);
         Route::get('company-subscription/checkout/confirm', [CompanySubscriptionCheckoutController::class, 'confirm']);
         Route::post('company-subscription/downgrade', [CompanySubscriptionCheckoutController::class, 'downgrade']);

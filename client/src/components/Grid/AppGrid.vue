@@ -9,11 +9,20 @@ const props = defineProps({
   defaultSortField: String,
   defaultSortOrder: String,
   filters: Object,
+  expandable: {
+    type: Boolean,
+    default: false,
+  },
+  dataKey: {
+    type: String,
+    default: 'id',
+  },
 })
 
 const http = useHttp()
 const totalRecords = ref(0)
 const records = ref([])
+const expandedRows = ref({})
 const loading = ref(false)
 const loadParams = ref([])
 const limit = ref(0)
@@ -52,6 +61,7 @@ function loadData() {
     })
     .then(({ data }) => {
       records.value = data?.data
+      expandedRows.value = {}
       totalRecords.value = data?.total ?? 0
       limit.value = data?.per_page || 15
     })
@@ -101,7 +111,9 @@ function formatValue(column, data) {
 
 <template>
   <DataTable
+    v-model:expandedRows="expandedRows"
     :value="records"
+    :data-key="dataKey"
     :total-records="totalRecords"
     :loading="loading"
     :lazy="true"
@@ -117,6 +129,8 @@ function formatValue(column, data) {
     @page="reloadParams($event)"
     @sort="reloadParams($event)"
   >
+    <Column v-if="expandable" expander class="fit-column" />
+
     <Column
       v-for="col in columns.filter(column => !column.disabled)"
       :key="col.field"
@@ -184,5 +198,9 @@ function formatValue(column, data) {
         </template>
       </template>
     </Column>
+
+    <template v-if="expandable" #expansion="slotProps">
+      <slot name="expansion" :data="slotProps.data" />
+    </template>
   </DataTable>
 </template>

@@ -140,6 +140,13 @@ const routeGroups = [
         roles: ['company_admin'],
       },
       {
+        name: 'company-timelogs',
+        label: 'Time Logs',
+        icon: 'pi pi-stopwatch',
+        roles: ['company_admin'],
+        feature: 'time-logging',
+      },
+      {
         name: 'timesheet',
         label: 'Timesheet',
         icon: 'pi pi-clock',

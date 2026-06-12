@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\CompanyUser;
 use App\Models\Notification;
+use App\Models\Order;
+use App\Models\User;
 use App\Models\UserWorkstream;
 use App\Services\CompanyWorkloadForecaster;
 use Illuminate\Http\JsonResponse;
@@ -26,7 +29,62 @@ class DashboardController extends Controller
             'total_worked_items_today' => $this->totalWorkedItemsToday($user->id, $role, $companyId),
             'unread_notifications_count' => $this->unreadNotificationsCount($user->id),
             'flashcards' => $forecast ? $this->forecastFlashcards($forecast) : [],
+            'admin_overview' => $role === 'admin' ? $this->adminOverview() : null,
         ]);
+    }
+
+    private function adminOverview(): array
+    {
+        $recentCompanies = Company::query()
+            ->with(['owner:id,name,email', 'subscriptionPlan:id,name'])
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn (Company $company) => [
+                'id' => $company->id,
+                'name' => $company->name,
+                'owner_name' => $company->owner?->name,
+                'owner_email' => $company->owner?->email,
+                'plan_name' => $company->subscriptionPlan?->name,
+                'created_at' => $company->created_at,
+            ])
+            ->all();
+
+        $recentOrders = Order::query()
+            ->with(['company:id,name', 'subscriptionPlan:id,name'])
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn (Order $order) => [
+                'id' => $order->id,
+                'company_name' => $order->company?->name,
+                'plan_name' => $order->subscriptionPlan?->name,
+                'amount' => $order->amount,
+                'currency' => $order->currency,
+                'status' => $order->status,
+                'created_at' => $order->created_at,
+            ])
+            ->all();
+
+        return [
+            'needs_attention' => [
+                'pending_company_admins' => CompanyUser::query()
+                    ->where('role', 'company_admin')
+                    ->where('status', 'pending')
+                    ->count(),
+                'blocked_users' => User::query()
+                    ->where('is_blocked', true)
+                    ->count(),
+                'pending_orders' => Order::query()
+                    ->where('status', 'pending')
+                    ->count(),
+                'failed_orders' => Order::query()
+                    ->where('status', 'failed')
+                    ->count(),
+            ],
+            'recent_companies' => $recentCompanies,
+            'recent_orders' => $recentOrders,
+        ];
     }
 
     private function totalWorkedItemsToday(int $userId, string $role, ?int $companyId): int
