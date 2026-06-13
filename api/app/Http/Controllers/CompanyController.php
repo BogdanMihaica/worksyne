@@ -45,7 +45,10 @@ class CompanyController extends ApiResourceController
                 });
 
                 if ($company->owner_id) {
-                    $query->orWhereKey($company->owner_id);
+                    $query->orWhere(
+                        $query->getModel()->getQualifiedKeyName(),
+                        $company->owner_id,
+                    );
                 }
             })
             ->orderBy('name')

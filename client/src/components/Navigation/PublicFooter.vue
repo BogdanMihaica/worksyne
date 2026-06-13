@@ -27,7 +27,6 @@ const currentYear = new Date().getFullYear()
           <RouterLink :to="{ name: 'pricing' }" class="hover:text-white">Pricing</RouterLink>
           <RouterLink :to="{ name: 'contact' }" class="hover:text-white">Contact</RouterLink>
         </nav>
-        <div class="text-slate-500">&copy; {{ currentYear }} Worksyne. All rights reserved.</div>
       </div>
     </div>
   </footer>

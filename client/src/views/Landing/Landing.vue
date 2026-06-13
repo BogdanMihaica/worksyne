@@ -13,18 +13,33 @@ const metrics = [
 const capabilities = [
   {
     icon: 'pi pi-building',
-    title: 'Company control',
-    text: 'Centralize company ownership, memberships, roles, approval status, and operating structure.',
+    title: 'People and company operations',
+    text: 'Manage company details, administrators, workers, roles, approval status, employee references, and subscription access from one workspace.',
   },
   {
     icon: 'pi pi-sitemap',
-    title: 'Workstream visibility',
-    text: 'Track teams across tasks, calls, vendors, units completed, and workstream-specific seniority.',
+    title: 'Workstreams and completed work',
+    text: 'Organize teams by workstream and seniority, let workers record completed units, and review company-wide activity with practical filters.',
   },
   {
-    icon: 'pi pi-shield',
-    title: 'Secure operations',
-    text: 'Protect every workflow with bearer-token authentication and guarded API access.',
+    icon: 'pi pi-clock',
+    title: 'Live time tracking',
+    text: 'Track work sessions and breaks in real time while giving managers a clear view of who is working, on a break, or offline.',
+  },
+  {
+    icon: 'pi pi-calendar-clock',
+    title: 'Time off and timesheets',
+    text: 'Request, approve, or reject time off and bring worked-time totals, leave, and daily activity together in a shared company timesheet.',
+  },
+  {
+    icon: 'pi pi-bell',
+    title: 'Operational notifications',
+    text: 'Send targeted company updates and receive alerts for time-off decisions, extended work sessions, and unusually long breaks.',
+  },
+  {
+    icon: 'pi pi-chart-bar',
+    title: 'Capacity and forecasting',
+    text: 'Model capacity by workstream and seniority, forecast upcoming demand, compare it with availability, and surface potential gaps on the dashboard.',
   },
 ]
 
@@ -126,14 +141,17 @@ const rows = [
 
     <div id="platform" class="bg-white px-5 py-16 lg:px-8">
       <div class="mx-auto max-w-7xl">
-        <div class="max-w-2xl">
+        <div class="max-w-3xl">
           <p class="text-sm font-semibold uppercase text-brand-700">Platform</p>
           <h2 class="mt-3 text-3xl font-semibold text-slate-950 sm:text-4xl">
-            Built for operating teams, not landing-page demos.
+            One connected workspace for people, work, time, and capacity.
           </h2>
+          <p class="mt-4 text-lg leading-8 text-slate-600">
+            Worksyne connects daily execution with operational planning, so every work log, timer, leave request, and team assignment contributes to a clearer view of company performance.
+          </p>
         </div>
 
-        <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="capability in capabilities"
             :key="capability.title"

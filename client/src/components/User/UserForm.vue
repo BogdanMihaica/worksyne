@@ -133,108 +133,124 @@ function cancel() {
 </script>
 
 <template>
-  <app-card size="medium">
-    <template #title>
-      {{ title }}
-    </template>
+  <form class="flex flex-col gap-4" @submit.prevent="submit">
+    <div class="text-xl font-semibold text-slate-950">{{ title }}</div>
 
-    <template #content>
-      <form class="flex flex-col gap-4" @submit.prevent="submit">
-        <form-input
-          v-model="name"
-          label="Name"
-          required
-          size="lg"
-          :error="errors.name"
-        />
+    <div class="grid gap-4 xl:grid-cols-2 xl:*:min-w-0">
+      <app-card>
+        <template #title>
+          Account Details
+        </template>
 
-        <form-input
-          v-model="email"
-          label="Email"
-          required
-          size="lg"
-          :error="errors.email"
-        />
+        <template #content>
+          <div class="flex flex-col gap-4">
+            <form-input
+              v-model="name"
+              label="Name"
+              required
+              size="lg"
+              :error="errors.name"
+            />
 
-        <form-input
-          v-model="password"
-          label="Password"
-          type="password"
-          :required="!isEditMode"
-          size="lg"
-          :description="isEditMode ? 'Leave blank to keep the current password.' : 'The user will use this password to sign in.'"
-          :error="errors.password"
-        />
+            <form-input
+              v-model="email"
+              label="Email"
+              required
+              size="lg"
+              :error="errors.email"
+            />
 
-        <form-input
-          v-model="isAdmin"
-          label="Admin"
-          secondary-label="User has administrator access"
-          type="checkbox"
-          description="Administrators can manage all companies, users, plans, and orders."
-          :error="errors.is_admin"
-        />
+            <form-input
+              v-model="password"
+              label="Password"
+              type="password"
+              :required="!isEditMode"
+              size="lg"
+              :description="isEditMode ? 'Leave blank to keep the current password.' : 'The user will use this password to sign in.'"
+              :error="errors.password"
+            />
 
-        <form-input
-          v-model="isBlocked"
-          label="Blocked"
-          secondary-label="User is blocked"
-          type="checkbox"
-          description="Blocked users cannot sign in."
-          :error="errors.is_blocked"
-        />
+            <form-input
+              v-model="isAdmin"
+              label="Admin"
+              secondary-label="User has administrator access"
+              type="checkbox"
+              description="Administrators can manage all companies, users, plans, and orders."
+              :error="errors.is_admin"
+            />
 
-        <form-select
-          v-model="companyUserRole"
-          label="Company role"
-          size="lg"
-          :options="roleOptions"
-          :default-option="false"
-          description="Controls what the user can access inside their assigned company."
-          :error="errors['company_user.role']"
-        />
+            <form-input
+              v-model="isBlocked"
+              label="Blocked"
+              secondary-label="User is blocked"
+              type="checkbox"
+              description="Blocked users cannot sign in."
+              :error="errors.is_blocked"
+            />
+          </div>
+        </template>
+      </app-card>
 
-        <form-select
-          v-model="companyId"
-          label="Company"
-          size="lg"
-          :options="companyOptions"
-          :default-option="false"
-          :error="errors['company_user.company_id']"
-        />
+      <app-card>
+        <template #title>
+          Company Assignment
+        </template>
 
-        <form-input
-          v-model="companyUserExternalId"
-          label="Company external ID"
-          size="lg"
-          description="Optional identifier used to match this user with an external system."
-          :error="errors['company_user.external_id']"
-        />
+        <template #content>
+          <div class="flex flex-col gap-4">
+            <form-select
+              v-model="companyUserRole"
+              label="Company role"
+              size="lg"
+              :options="roleOptions"
+              :default-option="false"
+              description="Controls what the user can access inside their assigned company."
+              :error="errors['company_user.role']"
+            />
 
-        <form-select
-          v-model="companyUserStatus"
-          label="Company status"
-          size="lg"
-          :options="statusOptions"
-          :default-option="false"
-          description="Only approved company users can use company workflows."
-          :error="errors['company_user.status']"
-        />
+            <form-select
+              v-model="companyId"
+              label="Company"
+              size="lg"
+              :options="companyOptions"
+              :default-option="false"
+              :error="errors['company_user.company_id']"
+            />
 
-        <div class="flex gap-2">
-          <form-button
-            type="submit"
-            icon="save"
-            label="Save"
-            :loading="saving || loading"
-          />
-          <form-button
-            severity="ternary"
-            label="Cancel"
-            @click.prevent="cancel"
-          />
-        </div>
-      </form>
-    </template>
-  </app-card>
+            <form-input
+              v-model="companyUserExternalId"
+              label="Company external ID"
+              size="lg"
+              description="Optional identifier used to match this user with an external system."
+              :error="errors['company_user.external_id']"
+            />
+
+            <form-select
+              v-model="companyUserStatus"
+              label="Company status"
+              size="lg"
+              :options="statusOptions"
+              :default-option="false"
+              description="Only approved company users can use company workflows."
+              :error="errors['company_user.status']"
+            />
+          </div>
+        </template>
+      </app-card>
+    </div>
+
+    <div class="flex gap-2">
+      <form-button
+        type="submit"
+        icon="save"
+        label="Save"
+        :loading="saving || loading"
+      />
+      <form-button
+        severity="ternary"
+        label="Cancel"
+        @click.prevent="cancel"
+      />
+    </div>
+  </form>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useHttp } from '../../plugins/http'
 import { useAppToast } from '../../plugins/toast'
 import { authStore } from '../../stores/auth'
@@ -15,6 +15,7 @@ const saving = ref(false)
 const errors = ref({})
 const logsFilters = ref({})
 const editingWorkLog = ref(null)
+const formSection = ref(null)
 
 const workstreamId = ref('')
 const units = ref(1)
@@ -104,7 +105,7 @@ function resetForm() {
   errors.value = {}
 }
 
-function startEdit(workLog) {
+async function startEdit(workLog) {
   editingWorkLog.value = workLog
   workstreamId.value = workLog.workstream_id || ''
   units.value = workLog.units ?? 1
@@ -112,6 +113,9 @@ function startEdit(workLog) {
   referenceCode.value = workLog.reference_code || ''
   note.value = workLog.note || ''
   errors.value = {}
+
+  await nextTick()
+  formSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 async function submit() {
@@ -155,74 +159,76 @@ function cancelEdit() {
 
 <template>
   <div class="flex flex-col gap-6">
-    <app-card v-if="companyId" size="medium">
-      <template #title>
-        {{ title }}
-      </template>
+    <div ref="formSection" class="scroll-mt-24">
+      <app-card v-if="companyId" size="medium">
+        <template #title>
+          {{ title }}
+        </template>
 
-      <template #content>
-        <form class="flex flex-col gap-4" @submit.prevent="submit">
-          <form-select
-            v-model="workstreamId"
-            label="Workstream"
-            required
-            size="lg"
-            :options="workstreamOptions"
-            :default-option="false"
-            :error="errors.workstream_id"
-          />
-
-          <form-input
-            v-model="units"
-            label="Units"
-            type="number"
-            required
-            size="lg"
-            description="Number of completed units to record for this workstream."
-            :error="errors.units"
-          />
-
-          <form-date
-            v-model="loggedOn"
-            label="Work day"
-            required
-            size="lg"
-            :error="errors.logged_on"
-          />
-
-          <form-input
-            v-model="referenceCode"
-            label="Reference code"
-            size="lg"
-            description="Optional ticket, case, order, or task identifier."
-            :error="errors.reference_code"
-          />
-
-          <form-textarea
-            v-model="note"
-            label="Note"
-            size="lg"
-            :rows="4"
-            :error="errors.note"
-          />
-
-          <div class="flex flex-wrap gap-2">
-            <form-button
-              type="submit"
-              icon="save"
-              :label="submitLabel"
-              :loading="saving || loadingWorkstreams"
+        <template #content>
+          <form class="flex flex-col gap-4" @submit.prevent="submit">
+            <form-select
+              v-model="workstreamId"
+              label="Workstream"
+              required
+              size="lg"
+              :options="workstreamOptions"
+              :default-option="false"
+              :error="errors.workstream_id"
             />
-            <form-button
-              severity="ternary"
-              icon="ban"
-              :label="cancelLabel"
-              @click.prevent="cancelEdit"
+
+            <form-input
+              v-model="units"
+              label="Units"
+              type="number"
+              required
+              size="lg"
+              description="Number of completed units to record for this workstream."
+              :error="errors.units"
             />
-          </div>
-        </form>
-      </template>
-    </app-card>
+
+            <form-date
+              v-model="loggedOn"
+              label="Work day"
+              required
+              size="lg"
+              :error="errors.logged_on"
+            />
+
+            <form-input
+              v-model="referenceCode"
+              label="Reference code"
+              size="lg"
+              description="Optional ticket, case, order, or task identifier."
+              :error="errors.reference_code"
+            />
+
+            <form-textarea
+              v-model="note"
+              label="Note"
+              size="lg"
+              :rows="4"
+              :error="errors.note"
+            />
+
+            <div class="flex flex-wrap gap-2">
+              <form-button
+                type="submit"
+                icon="save"
+                :label="submitLabel"
+                :loading="saving || loadingWorkstreams"
+              />
+              <form-button
+                severity="ternary"
+                icon="ban"
+                :label="cancelLabel"
+                @click.prevent="cancelEdit"
+              />
+            </div>
+          </form>
+        </template>
+      </app-card>
+    </div>
 
     <app-card v-if="companyId">
       <template #title>
